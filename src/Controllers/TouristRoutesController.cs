@@ -17,7 +17,7 @@ public class TouristRoutesController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet, HttpHead]
     public IActionResult GetAllRoutes()
     {
         var routesFromRepo = _routeRepository.GetAllRoutes();
