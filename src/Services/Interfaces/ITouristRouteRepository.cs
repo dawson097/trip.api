@@ -5,7 +5,7 @@ namespace Trip.Api.Services.Interfaces;
 /// <summary>
 /// 旅游路线仓储服务
 /// </summary>
-public interface ITouristRouteRepository
+public interface ITouristRouteRepository : ICommonRepository
 {
     /// <summary>
     /// 获取所有旅游路线

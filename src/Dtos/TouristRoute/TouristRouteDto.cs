@@ -1,3 +1,5 @@
+using Trip.Api.Dtos.TouristRoutePicture;
+
 namespace Trip.Api.Dtos.TouristRoute;
 
 /// <summary>
@@ -32,4 +34,6 @@ public class TouristRouteDto
     public string TripType { get; set; }
 
     public string DepartureCity { get; set; }
+
+    public ICollection<TouristRoutePictureDto> TouristRoutePictures { get; set; }
 }
