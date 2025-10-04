@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 using Trip.Api.Dtos.TouristRoute;
+using Trip.Api.ResourceParameters;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
@@ -19,21 +19,10 @@ public class TouristRoutesController : ControllerBase
     }
 
     [HttpGet, HttpHead]
-    public IActionResult GetAllRoutes([FromQuery] string keyword, string rating)
+    public IActionResult GetAllRoutes([FromQuery] TouristRouteResourceParameters routeParams)
     {
-        var regex = new Regex(@"([A-Za-z0-9\-]+)(\d+)");
-        string ratingType = "";
-        int ratingValue = -1;
-
-        var match = regex.Match(rating);
-
-        if (match.Success)
-        {
-            ratingType = match.Groups[1].Value;
-            ratingValue = int.Parse(match.Groups[2].Value);
-        }
-
-        var routesFromRepo = _routeRepository.GetAllRoutes(keyword, ratingType, ratingValue);
+        var routesFromRepo = _routeRepository.GetAllRoutes(routeParams.Keyword, routeParams.RatingType,
+            routeParams.RatingValue);
 
         if (routesFromRepo == null || !routesFromRepo.Any())
         {

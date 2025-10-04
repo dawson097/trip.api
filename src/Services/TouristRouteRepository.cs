@@ -14,7 +14,7 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
         _context = context;
     }
 
-    public IEnumerable<TouristRoute> GetAllRoutes(string keyword, string ratingType, int ratingValue)
+    public IEnumerable<TouristRoute> GetAllRoutes(string keyword, string ratingType, int? ratingValue)
     {
         IQueryable<TouristRoute> result = _context.TouristRoutes.Include(
             route => route.TouristRoutePictures);
