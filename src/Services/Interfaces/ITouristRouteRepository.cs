@@ -11,7 +11,7 @@ public interface ITouristRouteRepository : ICommonRepository
     /// 获取所有旅游路线
     /// </summary>
     /// <returns>所有的旅游路线</returns>
-    IEnumerable<TouristRoute> GetAllRoutes(string keyword);
+    IEnumerable<TouristRoute> GetAllRoutes(string keyword, string ratingType, int ratingValue);
 
     /// <summary>
     /// 根据路线id获取对应的旅游路线
