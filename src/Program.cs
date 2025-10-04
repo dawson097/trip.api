@@ -1,7 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+using Trip.Api.DbContexts;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 添加路由控制器服务
 builder.Services.AddControllers();
+
+// 添加数据库上下文配置服务，并连接至数据库
+builder.Services.AddDbContext<TripDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("SqlServerConnection");
+
+    options.UseSqlServer(connectionString);
+});
 
 var app = builder.Build();
 
