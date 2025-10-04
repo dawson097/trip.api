@@ -1,0 +1,16 @@
+root = true
+
+# Windows platform common style
+[*]
+end_of_line = crlf
+charset = utf-8
+
+[*.cs]
+indent_size = 4
+indent_style = space
+
+[*.{xml,xaml,json}]
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+
