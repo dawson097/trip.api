@@ -6,7 +6,11 @@ using Trip.Api.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 // 添加路由控制器服务
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // 若返回格式不是已知格式，则返回406错误
+    options.ReturnHttpNotAcceptable = true;
+}).AddXmlDataContractSerializerFormatters(); // 添加XML格式支持
 
 // 注册仓储服务
 builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
@@ -18,6 +22,9 @@ builder.Services.AddDbContext<TripDbContext>(options =>
 
     options.UseSqlServer(connectionString);
 });
+
+// 添加AutoMapper映射服务
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
