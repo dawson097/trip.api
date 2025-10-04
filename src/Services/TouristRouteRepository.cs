@@ -14,9 +14,19 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
         _context = context;
     }
 
-    public IEnumerable<TouristRoute> GetAllRoutes()
+    public IEnumerable<TouristRoute> GetAllRoutes(string keyword)
     {
-        return _context.TouristRoutes.Include(route => route.TouristRoutePictures).ToList();
+        IQueryable<TouristRoute> result = _context.TouristRoutes.Include(
+            route => route.TouristRoutePictures);
+
+        // 判断keyword是否为空或者含有空值
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            keyword = keyword.Trim();
+            result = result.Where(route => route.Title.Contains(keyword));
+        }
+
+        return result.ToList();
     }
 
     public TouristRoute GetRouteById(Guid routeId)
