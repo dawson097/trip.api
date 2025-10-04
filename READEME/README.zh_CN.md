@@ -7,7 +7,7 @@
 1. AspNetCore
 2. EntityFramework
 3. Newtonsoft.Json
-4. AutoMapper(推荐14版本及一下，15版本开始收费)
+4. AutoMapper(推荐14版本及以下，15版本开始收费)
 5. JwtBearer
 6. JsonPatch
 7. Authentication
