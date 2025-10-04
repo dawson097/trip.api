@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
@@ -7,10 +9,12 @@ namespace Trip.Api.Controllers;
 public class TouristRoutesController : ControllerBase
 {
     private readonly ITouristRouteRepository _routeRepository;
+    private readonly IMapper _mapper;
 
-    public TouristRoutesController(ITouristRouteRepository routeRepository)
+    public TouristRoutesController(ITouristRouteRepository routeRepository, IMapper mapper)
     {
         _routeRepository = routeRepository;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -23,7 +27,7 @@ public class TouristRoutesController : ControllerBase
             return NotFound("找不到任何旅游路线");
         }
 
-        return Ok(routesFromRepo);
+        return Ok(_mapper.Map<IEnumerable<TouristRouteDto>>(routesFromRepo));
     }
 
     [HttpGet("{routeId:guid}")]
@@ -36,6 +40,6 @@ public class TouristRoutesController : ControllerBase
             return NotFound($"路线id为({routeId})的旅游路线找不到");
         }
 
-        return Ok(routeFromRepo);
+        return Ok(_mapper.Map<TouristRouteDto>(routeFromRepo));
     }
 }
