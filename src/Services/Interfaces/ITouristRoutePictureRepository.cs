@@ -20,4 +20,11 @@ public interface ITouristRoutePictureRepository : ICommonRepository
     /// <param name="pictureId">图片id</param>
     /// <returns>图片id对应的图片</returns>
     TouristRoutePicture GetPictureById(int pictureId);
+
+    /// <summary>
+    /// 在路线id对应的路线中添加单个图片
+    /// </summary>
+    /// <param name="routeId"></param>
+    /// <param name="picture"></param>
+    void AddPicture(Guid routeId, TouristRoutePicture picture);
 }

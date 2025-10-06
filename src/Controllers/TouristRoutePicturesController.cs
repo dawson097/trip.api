@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoutePicture;
+using Trip.Api.Models;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
@@ -8,8 +9,8 @@ namespace Trip.Api.Controllers;
 [ApiController, Route("api/tourist-routes/{routeId:guid}/pictures")]
 public class TouristRoutePicturesController : ControllerBase
 {
-    private readonly ITouristRoutePictureRepository _pictureRepository;
     private readonly IMapper _mapper;
+    private readonly ITouristRoutePictureRepository _pictureRepository;
 
     public TouristRoutePicturesController(ITouristRoutePictureRepository pictureRepository, IMapper mapper)
     {
@@ -35,13 +36,14 @@ public class TouristRoutePicturesController : ControllerBase
         return Ok(_mapper.Map<IEnumerable<TouristRoutePictureDto>>(picturesFromRepo));
     }
 
-    [HttpGet("{pictureId:int}")]
+    [HttpGet("{pictureId:int}", Name = "GetPictureById")]
     public IActionResult GetPictureById(Guid routeId, int pictureId)
     {
         if (!_pictureRepository.RouteExist(routeId))
         {
             return NotFound($"旅游路线({routeId})找不到");
         }
+
 
         var pictureFromRepo = _pictureRepository.GetPictureById(pictureId);
 
@@ -51,5 +53,27 @@ public class TouristRoutePicturesController : ControllerBase
         }
 
         return Ok(_mapper.Map<TouristRoutePictureDto>(pictureFromRepo));
+    }
+
+    [HttpPost]
+    public IActionResult AddPicture([FromRoute] Guid routeId, [FromBody] TouristRoutePictureAddDto pictureAddDto)
+    {
+        if (!_pictureRepository.RouteExist(routeId))
+        {
+            return NotFound($"旅游路线({routeId})找不到");
+        }
+
+        var pictureModel = _mapper.Map<TouristRoutePicture>(pictureAddDto);
+
+        _pictureRepository.AddPicture(routeId, pictureModel);
+        _pictureRepository.Save();
+
+        var pictureToReturn = _mapper.Map<TouristRoutePictureDto>(pictureModel);
+
+        return CreatedAtRoute("GetPictureById", new
+        {
+            routeId = pictureModel.TouristRouteId,
+            pictureid = pictureModel.Id
+        }, pictureToReturn);
     }
 }

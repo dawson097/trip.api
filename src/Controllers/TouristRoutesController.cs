@@ -27,7 +27,9 @@ public class TouristRoutesController : ControllerBase
             routeParams.RatingValue);
 
         if (routesFromRepo == null || !routesFromRepo.Any())
+        {
             return NotFound("找不到任何旅游路线");
+        }
 
         return Ok(_mapper.Map<IEnumerable<TouristRouteDto>>(routesFromRepo));
     }
@@ -38,7 +40,9 @@ public class TouristRoutesController : ControllerBase
         var routeFromRepo = _routeRepository.GetRouteById(routeId);
 
         if (routeFromRepo == null)
+        {
             return NotFound($"路线id为({routeId})的旅游路线找不到");
+        }
 
         return Ok(_mapper.Map<TouristRouteDto>(routeFromRepo));
     }
@@ -53,6 +57,9 @@ public class TouristRoutesController : ControllerBase
 
         var routeToReturn = _mapper.Map<TouristRouteDto>(routeModel);
 
-        return CreatedAtRoute("GetRouteById", new { routeId = routeToReturn.Id }, routeToReturn);
+        return CreatedAtRoute("GetRouteById", new
+        {
+            routeId = routeToReturn.Id
+        }, routeToReturn);
     }
 }
