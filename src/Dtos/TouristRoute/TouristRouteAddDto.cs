@@ -6,7 +6,7 @@ namespace Trip.Api.Dtos.TouristRoute;
 /// <summary>
 /// 添加旅游路线DTO
 /// </summary>
-public class TouristRouteAddDto
+public class TouristRouteAddDto : IValidatableObject
 {
     [Required(ErrorMessage = "标题不可为空"), MaxLength(100)]
     public string Title { get; set; }
@@ -38,4 +38,12 @@ public class TouristRouteAddDto
 
     public ICollection<TouristRoutePictureAddDto> TouristRoutePictures { get; set; } =
         new List<TouristRoutePictureAddDto>();
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (Title == Description)
+        {
+            yield return new ValidationResult("标题与描述必须不一致", new[] { "TouristRouteAddDto" });
+        }
+    }
 }
