@@ -7,7 +7,7 @@ public class RouteTitleMustBeDifferentFromDescriptionAttribute : ValidationAttri
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        var routeDto = (TouristRouteAddDto)validationContext.ObjectInstance;
+        var routeDto = (TouristRouteManipulationDto)validationContext.ObjectInstance;
 
         if (routeDto.Title == routeDto.Description)
         {

@@ -62,4 +62,23 @@ public class TouristRoutesController : ControllerBase
             routeId = routeToReturn.Id
         }, routeToReturn);
     }
+
+    [HttpPut("{routeId:guid}")]
+    public IActionResult UpdateRoute(Guid routeId, [FromBody] TouristRouteUpdateDto routeUpdateDto)
+    {
+        if (!_routeRepository.RouteExist(routeId))
+        {
+            return NotFound($"旅游路线({routeId})找不到");
+        }
+
+        var routeFromRepo = _routeRepository.GetRouteById(routeId);
+        _mapper.Map(routeUpdateDto, routeFromRepo);
+
+        if (!_routeRepository.Save())
+        {
+            return BadRequest("更新失败");
+        }
+
+        return Ok("更新成功");
+    }
 }
