@@ -44,4 +44,11 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
         return _context.TouristRoutes.Include(route => route.TouristRoutePictures)
             .FirstOrDefault(route => route.Id == routeId);
     }
+
+    public void AddRoute(TouristRoute route)
+    {
+        if (route == null) throw new ArgumentNullException(nameof(route));
+
+        _context.TouristRoutes.Add(route);
+    }
 }

@@ -16,4 +16,9 @@ public class CommonRepository : ICommonRepository
     {
         return _context.TouristRoutes.Any(route => route.Id == routeId);
     }
+
+    public bool Save()
+    {
+        return _context.SaveChanges() >= 0;
+    }
 }

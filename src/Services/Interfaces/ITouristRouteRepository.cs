@@ -19,4 +19,10 @@ public interface ITouristRouteRepository : ICommonRepository
     /// <param name="routeId">路线id</param>
     /// <returns>对应的旅游路线</returns>
     TouristRoute GetRouteById(Guid routeId);
+
+    /// <summary>
+    /// 添加旅游路线
+    /// </summary>
+    /// <param name="route">旅游路线实体</param>
+    void AddRoute(TouristRoute route);
 }

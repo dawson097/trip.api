@@ -11,4 +11,10 @@ public interface ICommonRepository
     /// <param name="routeId">路线id</param>
     /// <returns>存在返回true，不存在返回false</returns>
     bool RouteExist(Guid routeId);
+
+    /// <summary>
+    /// 判断是否保存成功
+    /// </summary>
+    /// <returns>成功返回true，失败返回false</returns>
+    bool Save();
 }
