@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Trip.Api.DbContexts;
 using Trip.Api.Services;
@@ -7,10 +8,31 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 添加路由控制器服务
 builder.Services.AddControllers(options =>
-{
-    // 若返回格式不是已知格式，则返回406错误
-    options.ReturnHttpNotAcceptable = true;
-}).AddXmlDataContractSerializerFormatters(); // 添加XML格式支持
+    {
+        // 若返回格式不是已知格式，则返回406错误
+        options.ReturnHttpNotAcceptable = true;
+    }).AddXmlDataContractSerializerFormatters() // 添加XML格式支持
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var problemDetail = new ValidationProblemDetails(context.ModelState)
+            {
+                Type = "422 Error",
+                Title = "标题或者描述存在问题",
+                Status = StatusCodes.Status422UnprocessableEntity,
+                Detail = "标题或描述相同，或是其中一项为空值，请检查",
+                Instance = context.HttpContext.Request.Path
+            };
+
+            problemDetail.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
+
+            return new UnprocessableEntityObjectResult(problemDetail)
+            {
+                ContentTypes = { "application/problem+json" }
+            };
+        };
+    });
 
 // 注册仓储服务
 builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
