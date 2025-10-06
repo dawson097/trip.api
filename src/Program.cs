@@ -12,10 +12,12 @@ builder.Services.AddControllers(options =>
         // 若返回格式不是已知格式，则返回406错误
         options.ReturnHttpNotAcceptable = true;
     }).AddXmlDataContractSerializerFormatters() // 添加XML格式支持
-    .ConfigureApiBehaviorOptions(options =>
+    .ConfigureApiBehaviorOptions(options => // 配置api行为
     {
+        // 配置无效模型响应工厂
         options.InvalidModelStateResponseFactory = context =>
         {
+
             var problemDetail = new ValidationProblemDetails(context.ModelState)
             {
                 Type = "422 Error",
