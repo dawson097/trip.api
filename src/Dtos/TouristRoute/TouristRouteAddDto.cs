@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using Trip.Api.Dtos.TouristRoutePicture;
+using Trip.Api.ValidationAttributes;
 
 namespace Trip.Api.Dtos.TouristRoute;
 
 /// <summary>
 /// 添加旅游路线DTO
 /// </summary>
-public class TouristRouteAddDto : IValidatableObject
+[RouteTitleMustBeDifferentFromDescription]
+public class TouristRouteAddDto
 {
     [Required(ErrorMessage = "标题不可为空"), MaxLength(100)]
     public string Title { get; set; }
@@ -38,12 +40,4 @@ public class TouristRouteAddDto : IValidatableObject
 
     public ICollection<TouristRoutePictureAddDto> TouristRoutePictures { get; set; } =
         new List<TouristRoutePictureAddDto>();
-
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        if (Title == Description)
-        {
-            yield return new ValidationResult("标题与描述必须不一致", new[] { "TouristRouteAddDto" });
-        }
-    }
 }
