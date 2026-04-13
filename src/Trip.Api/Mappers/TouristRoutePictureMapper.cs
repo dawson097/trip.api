@@ -14,5 +14,7 @@ public class TouristRoutePictureMapper : IRegister
         config.NewConfig<TouristRoutePicture, TouristRoutePictureDto>();
 
         config.NewConfig<TouristRoutePictureCreateDto, TouristRoutePicture>();
+
+        config.NewConfig<TouristRoutePictureUpdateDto, TouristRoutePicture>();
     }
 }
