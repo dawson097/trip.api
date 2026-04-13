@@ -16,5 +16,8 @@ public class TouristRouteMapper : IRegister
             .Map(dest => dest.TripType, src => src.TripType.ToString())
             .Map(dest => dest.TripDays, src => src.TripDays.ToString())
             .Map(dest => dest.DepartureCity, src => src.DepartureCity.ToString());
+
+        config.NewConfig<TouristRouteCreateDto, TouristRoute>()
+            .Map(dest => dest.Id, src => Guid.NewGuid());
     }
 }
