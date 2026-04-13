@@ -47,7 +47,7 @@ public class TouristRoutePicturesController : ControllerBase
             return NotFound($"旅游路线({routeId})找不到");
         }
 
-        var pictureFromRepo = await _pictureRepository.GetRouteByIdAsync(pictureId);
+        var pictureFromRepo = await _pictureRepository.GetPictureByIdAsync(pictureId);
 
         if (pictureFromRepo == null)
         {
@@ -78,5 +78,22 @@ public class TouristRoutePicturesController : ControllerBase
             routeId = pictureToReturn.TouristRouteId,
             pictureId = pictureToReturn.Id
         }, pictureToReturn);
+    }
+
+    [HttpPut("{pictureId:int}")]
+    public async Task<IActionResult> PutTouristRoutePictureAsync([FromRoute] int pictureId,
+        [FromBody] TouristRoutePictureUpdateDto pictureUpdateDto)
+    {
+        if (!await _pictureRepository.PicturesExitsAsync(pictureId))
+        {
+            return NotFound($"图片({pictureId})不存在");
+        }
+
+        var pictureFromRepo = await _pictureRepository.GetPictureByIdAsync(pictureId);
+
+        _mapper.Map(pictureUpdateDto, pictureFromRepo);
+        await _pictureRepository.SaveAsync();
+
+        return NoContent();
     }
 }
