@@ -1,10 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Trip.Api.DbContexts;
+using Trip.Api.Services;
+using Trip.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 注册控制器路由服务
 builder.Services.AddControllers();
+
+// 注册仓储服务
+builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
 
 // 注册数据库上下文连接配置服务
 builder.Services.AddDbContext<AppDbContext>(options =>
