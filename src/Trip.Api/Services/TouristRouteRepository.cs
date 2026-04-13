@@ -42,4 +42,14 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
         return (await _context.TouristRoutes.Include(route => route.TouristRoutePictures)
             .FirstOrDefaultAsync(t => t.Id == routeId))!;
     }
+
+    public async Task AddRouteAsync(TouristRoute route)
+    {
+        if (route == null)
+        {
+            throw new ArgumentNullException(nameof(route));
+        }
+
+        await _context.TouristRoutes.AddAsync(route);
+    }
 }

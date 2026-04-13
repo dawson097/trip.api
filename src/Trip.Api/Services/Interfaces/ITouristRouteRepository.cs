@@ -22,4 +22,10 @@ public interface ITouristRouteRepository : ICommonRepository
     /// <param name="routeId">路线id</param>
     /// <returns>单个旅游路线</returns>
     Task<TouristRoute> GetRouteByIdAsync(Guid routeId);
+
+    /// <summary>
+    /// 添加旅游路线实体数据
+    /// </summary>
+    /// <param name="route">旅游路线实体</param>
+    Task AddRouteAsync(TouristRoute route);
 }
