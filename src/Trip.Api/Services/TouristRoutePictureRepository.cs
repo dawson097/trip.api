@@ -19,7 +19,7 @@ public class TouristRoutePictureRepository : CommonRepository, ITouristRoutePict
         return await _context.TouristRoutePictures.Where(picture => picture.TouristRouteId == routeId).ToListAsync();
     }
 
-    public async Task<TouristRoutePicture> GetRouteByIdAsync(int pictureId)
+    public async Task<TouristRoutePicture> GetPictureByIdAsync(int pictureId)
     {
         return (await _context.TouristRoutePictures.FirstOrDefaultAsync(picture => picture.Id == pictureId))!;
     }

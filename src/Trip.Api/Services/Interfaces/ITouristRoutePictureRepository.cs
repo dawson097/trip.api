@@ -19,7 +19,7 @@ public interface ITouristRoutePictureRepository : ICommonRepository
     /// </summary>
     /// <param name="pictureId">图片id</param>
     /// <returns>单个图片</returns>
-    Task<TouristRoutePicture> GetRouteByIdAsync(int pictureId);
+    Task<TouristRoutePicture> GetPictureByIdAsync(int pictureId);
 
     /// <summary>
     /// 添加旅游路线图片实体数据
