@@ -21,5 +21,7 @@ public class TouristRouteMapper : IRegister
             .Map(dest => dest.Id, src => Guid.NewGuid());
 
         config.NewConfig<TouristRouteUpdateDto, TouristRoute>();
+
+        config.NewConfig<TouristRoute, TouristRouteUpdateDto>();
     }
 }
