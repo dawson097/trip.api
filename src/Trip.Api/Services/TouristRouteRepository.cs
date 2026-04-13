@@ -9,7 +9,7 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
 {
     private readonly AppDbContext _context;
 
-    public TouristRouteRepository(AppDbContext context)
+    public TouristRouteRepository(AppDbContext context) : base(context)
     {
         _context = context;
     }
