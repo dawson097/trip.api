@@ -16,11 +16,12 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
 
     public async Task<IList<TouristRoute>> GetAllRoutesAsync()
     {
-        return await _context.TouristRoutes.ToListAsync();
+        return await _context.TouristRoutes.Include(route => route.TouristRoutePictures).ToListAsync();
     }
 
     public async Task<TouristRoute> GetRouteByIdAsync(Guid routeId)
     {
-        return (await _context.TouristRoutes.FirstOrDefaultAsync(t => t.Id == routeId))!;
+        return (await _context.TouristRoutes.Include(route => route.TouristRoutePictures)
+            .FirstOrDefaultAsync(t => t.Id == routeId))!;
     }
 }
