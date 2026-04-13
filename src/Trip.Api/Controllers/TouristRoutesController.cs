@@ -1,4 +1,5 @@
 using MapsterMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
@@ -75,6 +76,26 @@ public class TouristRoutesController : ControllerBase
         var routeFromRepo = await _routeRepository.GetRouteByIdAsync(routeId);
 
         _mapper.Map(routeUpdateDto, routeFromRepo);
+        await _routeRepository.SaveAsync();
+
+        return NoContent();
+    }
+
+    [HttpPatch("{routeId:guid}")]
+    public async Task<IActionResult> PatchTouristRouteAsync([FromRoute] Guid routeId,
+        [FromBody] JsonPatchDocument<TouristRouteUpdateDto> patchDoc)
+    {
+        if (!await _routeRepository.RoutesExitsAsync(routeId))
+        {
+            return NotFound($"旅游路线({routeId})找不到");
+        }
+
+        var routeFromRepo = await _routeRepository.GetRouteByIdAsync(routeId);
+        var routeToPatch = _mapper.Map<TouristRouteUpdateDto>(routeFromRepo);
+
+        patchDoc.ApplyTo(routeToPatch);
+
+        _mapper.Map(routeToPatch, routeFromRepo);
         await _routeRepository.SaveAsync();
 
         return NoContent();
