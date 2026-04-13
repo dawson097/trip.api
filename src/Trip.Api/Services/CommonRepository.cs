@@ -18,6 +18,11 @@ public class CommonRepository : ICommonRepository
         return await _context.TouristRoutes.AnyAsync(route => route.Id == routeId);
     }
 
+    public async Task<bool> PicturesExitsAsync(int pictureId)
+    {
+        return await _context.TouristRoutePictures.AnyAsync(picture => picture.Id == pictureId);
+    }
+
     public async Task<bool> SaveAsync()
     {
         return await _context.SaveChangesAsync() >= 0;

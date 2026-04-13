@@ -14,6 +14,13 @@ public interface ICommonRepository
     Task<bool> RoutesExitsAsync(Guid routeId);
 
     /// <summary>
+    /// 根据图片id判断图片实体数据是否存在
+    /// </summary>
+    /// <param name="pictureId">图片id</param>
+    /// <returns>存在返回true，反之返回false</returns>
+    Task<bool> PicturesExitsAsync(int pictureId);
+
+    /// <summary>
     /// 判断是否将数据插入到数据库
     /// </summary>
     /// <returns>插入成功返回true，失败返回false</returns>
