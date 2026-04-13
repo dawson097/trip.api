@@ -12,6 +12,7 @@ builder.Services.AddControllers();
 
 // 注册仓储服务
 builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
+builder.Services.AddTransient<ITouristRoutePictureRepository, TouristRoutePictureRepository>();
 
 // 注册数据库上下文连接配置服务
 builder.Services.AddDbContext<AppDbContext>(options =>
