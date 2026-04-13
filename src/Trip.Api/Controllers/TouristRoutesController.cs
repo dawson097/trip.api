@@ -1,6 +1,7 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoute;
+using Trip.Api.ResourceParameters;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
@@ -21,16 +22,18 @@ public class TouristRoutesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTouristRoutesAsync()
+    public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameter routeParams)
     {
-        var routesFromRepo = await _routeRepository.GetAllRoutesAsync();
+        var routesFromRepo =
+            await _routeRepository.GetAllRoutesAsync(routeParams.Keyword, routeParams.RatingType,
+                routeParams.RatingValue);
 
         if (routesFromRepo == null || !routesFromRepo.Any())
         {
             return NotFound("找不到任何旅游路线");
         }
 
-        return Ok(_mapper.Map<IEnumerable<TouristRouteDto>>(routesFromRepo));
+        return Ok(_mapper.Map<List<TouristRouteDto>>(routesFromRepo));
     }
 
     [HttpGet("{routeId:guid}")]
