@@ -8,7 +8,8 @@ using Trip.Api.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 // 注册控制器路由服务
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.ReturnHttpNotAcceptable = true)
+    .AddXmlDataContractSerializerFormatters(); // 实现内容协商
 
 // 注册仓储服务
 builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
