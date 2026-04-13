@@ -1,4 +1,6 @@
+using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Trip.Api.Configs;
 using Trip.Api.DbContexts;
 using Trip.Api.Services;
 using Trip.Api.Services.Interfaces;
@@ -18,6 +20,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
     options.UseNpgsql(connectionString);
 });
+
+// 注册Mapster映射
+builder.Services.AddMapster();
+
+MapsterConfig.Configure();
 
 var app = builder.Build();
 
