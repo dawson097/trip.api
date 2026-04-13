@@ -1,5 +1,6 @@
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
 using Trip.Api.Configs;
 using Trip.Api.DbContexts;
 using Trip.Api.Services;
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 注册控制器路由服务
 builder.Services.AddControllers(options => options.ReturnHttpNotAcceptable = true)
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver()) // 配置JSON命名方式为驼峰式
     .AddXmlDataContractSerializerFormatters(); // 实现内容协商
 
 // 注册仓储服务
