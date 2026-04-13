@@ -23,4 +23,20 @@ public class TouristRoutePictureRepository : CommonRepository, ITouristRoutePict
     {
         return (await _context.TouristRoutePictures.FirstOrDefaultAsync(picture => picture.Id == pictureId))!;
     }
+
+    public async Task AddPictureAsync(Guid routeId, TouristRoutePicture picture)
+    {
+        if (routeId == Guid.Empty)
+        {
+            throw new ArgumentNullException(nameof(routeId));
+        }
+
+        if (picture == null)
+        {
+            throw new ArgumentNullException(nameof(picture));
+        }
+
+        picture.TouristRouteId = routeId;
+        await _context.TouristRoutePictures.AddAsync(picture);
+    }
 }
