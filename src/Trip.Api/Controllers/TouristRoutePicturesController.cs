@@ -1,6 +1,7 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoutePicture;
+using Trip.Api.Entities;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
@@ -38,7 +39,7 @@ public class TouristRoutePicturesController : ControllerBase
         return Ok(_mapper.Map<IEnumerable<TouristRoutePictureDto>>(picturesFromRepo));
     }
 
-    [HttpGet("{pictureId:int}")]
+    [HttpGet("{pictureId:int}", Name = "GetTouristRoutePictureAsync")]
     public async Task<IActionResult> GetTouristRoutePictureAsync([FromRoute] Guid routeId, [FromRoute] int pictureId)
     {
         if (!await _pictureRepository.RoutesExitsAsync(routeId))
@@ -54,5 +55,28 @@ public class TouristRoutePicturesController : ControllerBase
         }
 
         return Ok(_mapper.Map<TouristRoutePictureDto>(pictureFromRepo));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PostTouristRoutePictureAsync([FromRoute] Guid routeId,
+        [FromBody] TouristRoutePictureCreateDto pictureCreateDto)
+    {
+        if (!await _pictureRepository.RoutesExitsAsync(routeId))
+        {
+            return NotFound($"旅游路线({routeId})不存在");
+        }
+
+        var pictureEntity = _mapper.Map<TouristRoutePicture>(pictureCreateDto);
+
+        await _pictureRepository.AddPictureAsync(routeId, pictureEntity);
+        await _pictureRepository.SaveAsync();
+
+        var pictureToReturn = _mapper.Map<TouristRoutePictureDto>(pictureEntity);
+
+        return CreatedAtRoute("GetTouristRoutePictureAsync", new
+        {
+            routeId = pictureToReturn.TouristRouteId,
+            pictureId = pictureToReturn.Id
+        }, pictureToReturn);
     }
 }
