@@ -1,6 +1,20 @@
+using Microsoft.EntityFrameworkCore;
+using Trip.Api.DbContexts;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Services;
 
 public class CommonRepository : ICommonRepository
-{ }
+{
+    private readonly AppDbContext _context;
+
+    public CommonRepository(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<bool> RoutesExitsAsync(Guid routeId)
+    {
+        return await _context.TouristRoutes.AnyAsync(route => route.Id == routeId);
+    }
+}
