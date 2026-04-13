@@ -17,4 +17,9 @@ public class CommonRepository : ICommonRepository
     {
         return await _context.TouristRoutes.AnyAsync(route => route.Id == routeId);
     }
+
+    public async Task<bool> SaveAsync()
+    {
+        return await _context.SaveChangesAsync() >= 0;
+    }
 }

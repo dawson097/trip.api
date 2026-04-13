@@ -12,4 +12,10 @@ public interface ICommonRepository
     /// <param name="routeId">路线id</param>
     /// <returns>存在返回true，反之返回false</returns>
     Task<bool> RoutesExitsAsync(Guid routeId);
+
+    /// <summary>
+    /// 判断是否将数据插入到数据库
+    /// </summary>
+    /// <returns>插入成功返回true，失败返回false</returns>
+    Task<bool> SaveAsync();
 }
