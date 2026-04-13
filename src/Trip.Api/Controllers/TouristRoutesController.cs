@@ -1,6 +1,7 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoute;
+using Trip.Api.Entities;
 using Trip.Api.ResourceParameters;
 using Trip.Api.Services.Interfaces;
 
@@ -36,7 +37,7 @@ public class TouristRoutesController : ControllerBase
         return Ok(_mapper.Map<List<TouristRouteDto>>(routesFromRepo));
     }
 
-    [HttpGet("{routeId:guid}")]
+    [HttpGet("{routeId:guid}", Name = "GetTouristRouteAsync")]
     public async Task<IActionResult> GetTouristRouteAsync([FromRoute] Guid routeId)
     {
         var routeFromRepo = await _routeRepository.GetRouteByIdAsync(routeId);
@@ -47,5 +48,18 @@ public class TouristRoutesController : ControllerBase
         }
 
         return Ok(_mapper.Map<TouristRouteDto>(routeFromRepo));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PostTouristRouteAsync([FromBody] TouristRouteCreateDto routeCreateDto)
+    {
+        var routeEntity = _mapper.Map<TouristRoute>(routeCreateDto);
+
+        await _routeRepository.AddRouteAsync(routeEntity);
+        await _routeRepository.SaveAsync();
+
+        var routeToReturn = _mapper.Map<TouristRouteDto>(routeEntity);
+
+        return CreatedAtRoute("GetTouristRouteAsync", new { routeId = routeToReturn.Id }, routeToReturn);
     }
 }
