@@ -12,5 +12,7 @@ public class TouristRoutePictureMapper : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<TouristRoutePicture, TouristRoutePictureDto>();
+
+        config.NewConfig<TouristRoutePictureCreateDto, TouristRoutePicture>();
     }
 }
