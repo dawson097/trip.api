@@ -96,4 +96,20 @@ public class TouristRoutePicturesController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{pictureId:int}")]
+    public async Task<IActionResult> DeleteTouristRoutePictureAsync([FromRoute] int pictureId)
+    {
+        if (!await _pictureRepository.PicturesExitsAsync(pictureId))
+        {
+            return NotFound($"图片({pictureId})不存在");
+        }
+
+        var pictureFromRepo = await _pictureRepository.GetPictureByIdAsync(pictureId);
+
+        _pictureRepository.DeletePicture(pictureFromRepo);
+        await _pictureRepository.SaveAsync();
+
+        return NoContent();
+    }
 }

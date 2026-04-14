@@ -39,4 +39,9 @@ public class TouristRoutePictureRepository : CommonRepository, ITouristRoutePict
         picture.TouristRouteId = routeId;
         await _context.TouristRoutePictures.AddAsync(picture);
     }
+
+    public void DeletePicture(TouristRoutePicture picture)
+    {
+        _context.TouristRoutePictures.Remove(picture);
+    }
 }
