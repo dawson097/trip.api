@@ -1,4 +1,5 @@
 using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Trip.Api.Configs;
@@ -12,7 +13,32 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(options => options.ReturnHttpNotAcceptable = true)
     .AddNewtonsoftJson(options =>
         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver()) // 配置JSON命名方式为驼峰式
-    .AddXmlDataContractSerializerFormatters(); // 实现内容协商
+    .AddXmlDataContractSerializerFormatters() // 实现内容协商
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        // 配置模型状态响应校验工厂
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            // 配置问题信息
+            var problemDetail = new ValidationProblemDetails(context.ModelState)
+            {
+                Type = "数据验证",
+                Title = "验证错误",
+                Status = StatusCodes.Status422UnprocessableEntity,
+                Detail = "数据验证错误",
+                Instance = context.HttpContext.Request.Path
+            };
+
+            // 添加trace id
+            problemDetail.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
+
+            // 配置响应结果实体类型
+            return new UnprocessableEntityObjectResult(problemDetail)
+            {
+                ContentTypes = { "application/problem+json", "application/problem+xml" }
+            };
+        };
+    }); // 配置422请求
 
 // 注册仓储服务
 builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
