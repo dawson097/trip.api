@@ -28,4 +28,10 @@ public interface ITouristRouteRepository : ICommonRepository
     /// </summary>
     /// <param name="route">旅游路线实体</param>
     Task AddRouteAsync(TouristRoute route);
+
+    /// <summary>
+    /// 删除旅游路线实体数据
+    /// </summary>
+    /// <param name="route">旅游路线实体</param>
+    void DeleteRoute(TouristRoute route);
 }

@@ -52,4 +52,9 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
 
         await _context.TouristRoutes.AddAsync(route);
     }
+
+    public void DeleteRoute(TouristRoute route)
+    {
+        _context.TouristRoutes.Remove(route);
+    }
 }

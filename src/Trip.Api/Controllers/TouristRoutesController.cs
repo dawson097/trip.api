@@ -105,4 +105,21 @@ public class TouristRoutesController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{routeId:guid}")]
+    public async Task<IActionResult> DeleteTouristRouteAsync([FromRoute] Guid routeId)
+    {
+        if (!await _routeRepository.RoutesExitsAsync(routeId))
+        {
+            return NotFound($"旅游路线({routeId})找不到");
+        }
+
+        var routeFromRepo = await _routeRepository.GetRouteByIdAsync(routeId);
+
+        _routeRepository.DeleteRoute(routeFromRepo);
+
+        await _routeRepository.SaveAsync();
+
+        return NoContent();
+    }
 }
