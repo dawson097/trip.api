@@ -93,7 +93,12 @@ public class TouristRoutesController : ControllerBase
         var routeFromRepo = await _routeRepository.GetRouteByIdAsync(routeId);
         var routeToPatch = _mapper.Map<TouristRouteUpdateDto>(routeFromRepo);
 
-        patchDoc.ApplyTo(routeToPatch);
+        patchDoc.ApplyTo(routeToPatch, ModelState);
+
+        if (!TryValidateModel(routeToPatch))
+        {
+            return ValidationProblem(ModelState);
+        }
 
         _mapper.Map(routeToPatch, routeFromRepo);
         await _routeRepository.SaveAsync();

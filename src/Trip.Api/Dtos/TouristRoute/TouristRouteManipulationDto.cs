@@ -1,14 +1,19 @@
+using System.ComponentModel.DataAnnotations;
 using Trip.Api.Dtos.TouristRoutePicture;
+using Trip.Api.ValidationAttributes;
 
 namespace Trip.Api.Dtos.TouristRoute;
 
 /// <summary>
 /// 旅游路线DTO基类
 /// </summary>
+[TitleMustBeDifferentFromDescription]
 public abstract class TouristRouteManipulationDto
 {
+    [Required(ErrorMessage = "标题不可为空")]
     public string Title { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "描述不可为空")]
     public string Description { get; set; } = string.Empty;
 
     public decimal Price { get; set; }
