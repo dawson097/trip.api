@@ -23,6 +23,8 @@ public class AppDbContext : DbContext
     /// <param name="modelBuilder">模型构建器</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         var routesFromJson = File.ReadAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
             @"/Assets/tourist-routes.json");
         var routesData = JsonConvert.DeserializeObject<List<TouristRoute>>(routesFromJson)!;

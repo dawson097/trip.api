@@ -12,8 +12,8 @@ using Trip.Api.DbContexts;
 namespace Trip.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260413030910_InitDb")]
-    partial class InitDb
+    [Migration("20260415121550_InitRoutesAndPicturesTables")]
+    partial class InitRoutesAndPicturesTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

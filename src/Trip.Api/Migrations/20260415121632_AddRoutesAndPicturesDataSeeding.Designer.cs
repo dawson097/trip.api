@@ -12,8 +12,8 @@ using Trip.Api.DbContexts;
 namespace Trip.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260413032114_AddDataSeeding")]
-    partial class AddDataSeeding
+    [Migration("20260415121632_AddRoutesAndPicturesDataSeeding")]
+    partial class AddRoutesAndPicturesDataSeeding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

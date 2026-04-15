@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Trip.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDb : Migration
+    public partial class InitRoutesAndPicturesTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Trip.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class AddDataSeeding : Migration
+    public partial class AddRoutesAndPicturesDataSeeding : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
