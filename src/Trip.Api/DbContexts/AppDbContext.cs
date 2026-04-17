@@ -18,6 +18,10 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<TouristRoutePicture> TouristRoutePictures { get; set; }
 
+    public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+
+    public DbSet<CartLineItem> CartLineItems { get; set; }
+
     /// <summary>
     /// 从JSON文件中获取实体数据反序列化为集合，通过EFCore以种子数据的形式插入到数据库中
     /// </summary>
