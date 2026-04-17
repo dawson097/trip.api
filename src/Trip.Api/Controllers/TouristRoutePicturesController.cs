@@ -1,4 +1,5 @@
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoutePicture;
 using Trip.Api.Entities;
@@ -57,7 +58,7 @@ public class TouristRoutePicturesController : ControllerBase
         return Ok(_mapper.Map<TouristRoutePictureDto>(pictureFromRepo));
     }
 
-    [HttpPost]
+    [HttpPost, Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> PostTouristRoutePictureAsync([FromRoute] Guid routeId,
         [FromBody] TouristRoutePictureCreateDto pictureCreateDto)
     {
@@ -80,7 +81,7 @@ public class TouristRoutePicturesController : ControllerBase
         }, pictureToReturn);
     }
 
-    [HttpPut("{pictureId:int}")]
+    [HttpPut("{pictureId:int}"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> PutTouristRoutePictureAsync([FromRoute] int pictureId,
         [FromBody] TouristRoutePictureUpdateDto pictureUpdateDto)
     {
@@ -97,7 +98,7 @@ public class TouristRoutePicturesController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{pictureId:int}")]
+    [HttpDelete("{pictureId:int}"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> DeleteTouristRoutePictureAsync([FromRoute] int pictureId)
     {
         if (!await _pictureRepository.PicturesExitsAsync(pictureId))

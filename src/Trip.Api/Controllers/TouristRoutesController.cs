@@ -1,4 +1,5 @@
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoute;
@@ -51,7 +52,7 @@ public class TouristRoutesController : ControllerBase
         return Ok(_mapper.Map<TouristRouteDto>(routeFromRepo));
     }
 
-    [HttpPost]
+    [HttpPost, Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> PostTouristRouteAsync([FromBody] TouristRouteCreateDto routeCreateDto)
     {
         var routeEntity = _mapper.Map<TouristRoute>(routeCreateDto);
@@ -64,7 +65,7 @@ public class TouristRoutesController : ControllerBase
         return CreatedAtRoute("GetTouristRouteAsync", new { routeId = routeToReturn.Id }, routeToReturn);
     }
 
-    [HttpPut("{routeId:guid}")]
+    [HttpPut("{routeId:guid}"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> PutTouristRouteAsync([FromRoute] Guid routeId,
         [FromBody] TouristRouteUpdateDto routeUpdateDto)
     {
@@ -81,7 +82,7 @@ public class TouristRoutesController : ControllerBase
         return NoContent();
     }
 
-    [HttpPatch("{routeId:guid}")]
+    [HttpPatch("{routeId:guid}"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> PatchTouristRouteAsync([FromRoute] Guid routeId,
         [FromBody] JsonPatchDocument<TouristRouteUpdateDto> patchDoc)
     {
@@ -106,7 +107,7 @@ public class TouristRoutesController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{routeId:guid}")]
+    [HttpDelete("{routeId:guid}"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> DeleteTouristRouteAsync([FromRoute] Guid routeId)
     {
         if (!await _routeRepository.RoutesExitsAsync(routeId))
