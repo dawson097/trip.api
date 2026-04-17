@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Trip.Api.Entities;
@@ -8,7 +9,7 @@ namespace Trip.Api.DbContexts;
 /// <summary>
 /// 数据库上下文配置
 /// </summary>
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<AppUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     { }
@@ -34,5 +35,9 @@ public class AppDbContext : DbContext
             @"/Assets/tourist-route-pictures.json");
         var routePicturesData = JsonConvert.DeserializeObject<List<TouristRoutePicture>>(routePicturesFromJson)!;
         modelBuilder.Entity<TouristRoutePicture>().HasData(routePicturesData);
+
+        // 更新用户与角色外键
+        modelBuilder.Entity<AppUser>(appUser =>
+            appUser.HasMany(user => user.UserRoles).WithOne().HasForeignKey(userRole => userRole.UserId).IsRequired());
     }
 }

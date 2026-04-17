@@ -1,9 +1,12 @@
 using Mapster;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Trip.Api.Configs;
 using Trip.Api.DbContexts;
+using Trip.Api.Entities;
+using Trip.Api.Extensions;
 using Trip.Api.Services;
 using Trip.Api.Services.Interfaces;
 
@@ -52,6 +55,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+// 注册身份认证
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>(); // 连接数据库上下文以生成初始化数据表
+
 // 注册Mapster映射
 builder.Services.AddMapster();
 
@@ -64,6 +71,14 @@ if (app.Environment.IsDevelopment())
     // 开发环境下使用开发者异常页面
     app.UseDeveloperExceptionPage();
 }
+
+// 通过UserDataSeederExtension生成用户
+await app.DataSeedAsync();
+
+// 启用用户身份鉴权
+app.UseAuthentication();
+// 启用用户授权
+app.UseAuthorization();
 
 // 映射控制器路由
 app.MapControllers();
