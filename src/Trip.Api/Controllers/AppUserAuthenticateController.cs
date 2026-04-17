@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Trip.Api.Dtos.AppUser;
 using Trip.Api.Entities;
+using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
 
@@ -16,13 +17,15 @@ namespace Trip.Api.Controllers;
 [ApiController, Route("api/auth")]
 public class AppUserAuthenticateController : ControllerBase
 {
+    private readonly IShoppingCartRepository _cartRepository;
     private readonly IConfiguration _configuration;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
 
-    public AppUserAuthenticateController(IConfiguration configuration, SignInManager<AppUser> signInManager,
-        UserManager<AppUser> userManager)
+    public AppUserAuthenticateController(IShoppingCartRepository cartRepository, IConfiguration configuration,
+        SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
     {
+        _cartRepository = cartRepository;
         _configuration = configuration;
         _signInManager = signInManager;
         _userManager = userManager;
@@ -91,6 +94,15 @@ public class AppUserAuthenticateController : ControllerBase
         {
             return BadRequest("注册失败!");
         }
+
+        var shoppingCart = new ShoppingCart
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id
+        };
+
+        await _cartRepository.CreateShoppingCart(shoppingCart);
+        await _cartRepository.SaveAsync();
 
         return Ok("注册成功!");
     }
