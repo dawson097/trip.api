@@ -1,7 +1,10 @@
+using System.Text;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Trip.Api.Configs;
 using Trip.Api.DbContexts;
@@ -11,6 +14,28 @@ using Trip.Api.Services;
 using Trip.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 注册JWT鉴权服务
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var secretByte = Encoding.UTF8.GetBytes(builder.Configuration["Authentication:SecretKey"]!);
+
+        // 配置token校验参数
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            // 校验发起者
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Authentication:Issuer"],
+            // 校验接收者
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Authentication:Audience"],
+            // 校验生命周期
+            ValidateLifetime = true,
+            // 生成发起者的签名密钥
+            IssuerSigningKey = new SymmetricSecurityKey(secretByte)
+        };
+    });
 
 // 注册控制器路由服务
 builder.Services.AddControllers(options => options.ReturnHttpNotAcceptable = true)
