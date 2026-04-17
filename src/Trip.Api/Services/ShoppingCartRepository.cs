@@ -22,6 +22,11 @@ public class ShoppingCartRepository : CommonRepository, IShoppingCartRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<CartLineItem?> GetCartLineItemById(int itemId)
+    {
+        return await _context.CartLineItems.FirstOrDefaultAsync(lineItem => lineItem.Id == itemId);
+    }
+
     public async Task CreateShoppingCart(ShoppingCart shoppingCart)
     {
         await _context.ShoppingCarts.AddAsync(shoppingCart);

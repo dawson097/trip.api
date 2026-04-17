@@ -15,6 +15,13 @@ public interface IShoppingCartRepository : ICommonRepository
     Task<ShoppingCart?> GetShoppingCartById(string userId);
 
     /// <summary>
+    /// 根据商品id获取对应的单个商品实体数据
+    /// </summary>
+    /// <param name="itemId">商品id</param>
+    /// <returns>对应的单个商品</returns>
+    Task<CartLineItem?> GetCartLineItemById(int itemId);
+
+    /// <summary>
     /// 创建购物车实体数据
     /// </summary>
     /// <param name="shoppingCart">购物车实体</param>
