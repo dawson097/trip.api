@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.CartLineItem;
 using Trip.Api.Dtos.ShoppingCart;
 using Trip.Api.Entities;
+using Trip.Api.Helpers;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
@@ -74,6 +75,19 @@ public class ShoppingCartController : ControllerBase
         _cartRepository.DeleteShoppingCartItem(lineItem);
         await _cartRepository.SaveAsync();
 
-        return Ok();
+        return NoContent();
+    }
+
+    [HttpDelete("items/({itemIds})"), Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> DeleteShoppingCartItemsAsync(
+        [ModelBinder(BinderType = typeof(ArrayModelBinderHelper)), FromRoute]
+        IEnumerable<int> itemIds)
+    {
+        var lineItems = await _cartRepository.GetCartLineItemsByItemIdsAsync(itemIds);
+
+        _cartRepository.DeleteShoppingCartItems(lineItems);
+        await _cartRepository.SaveAsync();
+
+        return NoContent();
     }
 }

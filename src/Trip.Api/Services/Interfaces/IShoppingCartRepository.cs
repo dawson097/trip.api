@@ -15,6 +15,13 @@ public interface IShoppingCartRepository : ICommonRepository
     Task<ShoppingCart> GetShoppingCartByIdAsync(string userId);
 
     /// <summary>
+    /// 根据商品id集合批量获取商品列表实体数据
+    /// </summary>
+    /// <param name="itemIds">商品列表id集合</param>
+    /// <returns>商品列表</returns>
+    Task<IEnumerable<CartLineItem>> GetCartLineItemsByItemIdsAsync(IEnumerable<int> itemIds);
+
+    /// <summary>
     /// 根据商品id获取对应的单个商品实体数据
     /// </summary>
     /// <param name="itemId">商品id</param>
@@ -38,4 +45,6 @@ public interface IShoppingCartRepository : ICommonRepository
     /// </summary>
     /// <param name="lineItem">商品实体</param>
     void DeleteShoppingCartItem(CartLineItem lineItem);
+
+    void DeleteShoppingCartItems(IEnumerable<CartLineItem> lineItems);
 }
