@@ -24,6 +24,13 @@ public interface ITouristRouteRepository : ICommonRepository
     Task<TouristRoute> GetRouteByIdAsync(Guid routeId);
 
     /// <summary>
+    /// 根据类型id集合获取旅游路线列表实体数据
+    /// </summary>
+    /// <param name="routeIds">路线id集合</param>
+    /// <returns>旅游路线列表</returns>
+    Task<IEnumerable<TouristRoute>> GetRouteByIdsAsync(IEnumerable<Guid> routeIds);
+
+    /// <summary>
     /// 添加旅游路线实体数据
     /// </summary>
     /// <param name="route">旅游路线实体</param>
@@ -34,4 +41,10 @@ public interface ITouristRouteRepository : ICommonRepository
     /// </summary>
     /// <param name="route">旅游路线实体</param>
     void DeleteRoute(TouristRoute route);
+
+    /// <summary>
+    /// 删除旅游路线列表实体数据
+    /// </summary>
+    /// <param name="routes">旅游路线列表</param>
+    void DeleteRoutes(IEnumerable<TouristRoute> routes);
 }

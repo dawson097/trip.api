@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
+using Trip.Api.Helpers;
 using Trip.Api.ResourceParameters;
 using Trip.Api.Services.Interfaces;
 
@@ -118,7 +119,19 @@ public class TouristRoutesController : ControllerBase
         var routeFromRepo = await _routeRepository.GetRouteByIdAsync(routeId);
 
         _routeRepository.DeleteRoute(routeFromRepo);
+        await _routeRepository.SaveAsync();
 
+        return NoContent();
+    }
+
+    [HttpDelete("({routeIds}"), Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> DeleteTouristRoutesAsync(
+        [ModelBinder(BinderType = typeof(ArrayModelBinderHelper)), FromRoute]
+        IEnumerable<Guid> routeIds)
+    {
+        var routeItems = await _routeRepository.GetRouteByIdsAsync(routeIds);
+
+        _routeRepository.DeleteRoutes(routeItems);
         await _routeRepository.SaveAsync();
 
         return NoContent();

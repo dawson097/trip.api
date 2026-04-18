@@ -43,6 +43,11 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
             .FirstOrDefaultAsync(t => t.Id == routeId))!;
     }
 
+    public async Task<IEnumerable<TouristRoute>> GetRouteByIdsAsync(IEnumerable<Guid> routeIds)
+    {
+        return await _context.TouristRoutes.Where(route => routeIds.Contains(route.Id)).ToListAsync();
+    }
+
     public async Task AddRouteAsync(TouristRoute route)
     {
         if (route == null)
@@ -56,5 +61,10 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
     public void DeleteRoute(TouristRoute route)
     {
         _context.TouristRoutes.Remove(route);
+    }
+
+    public void DeleteRoutes(IEnumerable<TouristRoute> routes)
+    {
+        _context.TouristRoutes.RemoveRange(routes);
     }
 }
