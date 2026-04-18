@@ -11,7 +11,7 @@ public class OrderDto
 
     public string UserId { get; set; } = string.Empty;
 
-    public ICollection<CartLineItemDto>? OrderItems { get; set; }
+    public ICollection<CartLineItemDto> OrderItems { get; set; } = new List<CartLineItemDto>();
 
     public string OrderState { get; set; } = string.Empty;
 
