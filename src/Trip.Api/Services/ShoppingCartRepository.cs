@@ -32,9 +32,20 @@ public class ShoppingCartRepository : CommonRepository, IShoppingCartRepository
         return await _context.CartLineItems.FirstOrDefaultAsync(lineItem => lineItem.Id == itemId);
     }
 
-    public async Task CreateShoppingCartItemAsync(CartLineItem cartLineItem)
+    public async Task AddShoppingCartItemAsync(CartLineItem cartLineItem)
     {
         await _context.CartLineItems.AddAsync(cartLineItem);
+    }
+
+
+    public async Task AddShoppingCartAsync(ShoppingCart shoppingCart)
+    {
+        await _context.ShoppingCarts.AddAsync(shoppingCart);
+    }
+
+    public async Task AddOrderAsync(Order order)
+    {
+        await _context.Orders.AddAsync(order);
     }
 
     public void DeleteShoppingCartItem(CartLineItem lineItem)
@@ -45,10 +56,5 @@ public class ShoppingCartRepository : CommonRepository, IShoppingCartRepository
     public void DeleteShoppingCartItems(IEnumerable<CartLineItem> lineItems)
     {
         _context.CartLineItems.RemoveRange(lineItems);
-    }
-
-    public async Task CreateShoppingCartAsync(ShoppingCart shoppingCart)
-    {
-        await _context.ShoppingCarts.AddAsync(shoppingCart);
     }
 }

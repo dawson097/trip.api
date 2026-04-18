@@ -32,13 +32,19 @@ public interface IShoppingCartRepository : ICommonRepository
     /// 创建购物车实体数据
     /// </summary>
     /// <param name="shoppingCart">购物车实体</param>
-    Task CreateShoppingCartAsync(ShoppingCart shoppingCart);
+    Task AddShoppingCartAsync(ShoppingCart shoppingCart);
 
     /// <summary>
     /// 创建购物车商品列表实体数据
     /// </summary>
     /// <param name="cartLineItem">购物车商品列表</param>
-    Task CreateShoppingCartItemAsync(CartLineItem cartLineItem);
+    Task AddShoppingCartItemAsync(CartLineItem cartLineItem);
+
+    /// <summary>
+    /// 创建订单实体数据
+    /// </summary>
+    /// <param name="order">订单实体</param>
+    Task AddOrderAsync(Order order);
 
     /// <summary>
     /// 删除单个商品实体数据
