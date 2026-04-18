@@ -27,19 +27,19 @@ public class ShoppingCartController : ControllerBase
     }
 
     [HttpGet, Authorize]
-    public async Task<IActionResult> GetShoppingCart()
+    public async Task<IActionResult> GetShoppingCartsAsync()
     {
         var userId = _httpContext.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        var shoppingCart = await _cartRepository.GetShoppingCartById(userId);
+        var shoppingCart = await _cartRepository.GetShoppingCartByIdAsync(userId);
 
         return Ok(_mapper.Map<ShoppingCartDto>(shoppingCart!));
     }
 
     [HttpPost("items"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PostShoppingCartItem([FromBody] CartLineItemCreateDto itemCreateDto)
+    public async Task<IActionResult> PostShoppingCartItemAsync([FromBody] CartLineItemCreateDto itemCreateDto)
     {
         var userId = _httpContext.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        var shoppingCart = await _cartRepository.GetShoppingCartById(userId);
+        var shoppingCart = await _cartRepository.GetShoppingCartByIdAsync(userId);
 
         var routeFromRepo = await _routeRepository.GetRouteByIdAsync(itemCreateDto.TouristRouteId);
 
@@ -55,9 +55,25 @@ public class ShoppingCartController : ControllerBase
             OriginalPrice = routeFromRepo.OriginalPrice,
             DiscountPresent = routeFromRepo.DiscountPresent
         };
-        await _cartRepository.CreateShoppingCartItem(lineItem);
+        await _cartRepository.CreateShoppingCartItemAsync(lineItem);
         await _cartRepository.SaveAsync();
 
         return Ok(_mapper.Map<CartLineItemDto>(lineItem));
+    }
+
+    [HttpDelete("items/{itemId:int}"), Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> DeleteShoppingCartItemAsync([FromRoute] int itemId)
+    {
+        var lineItem = await _cartRepository.GetCartLineItemByIdAsync(itemId);
+
+        if (lineItem == null)
+        {
+            return NotFound($"商品({itemId})找不到");
+        }
+
+        _cartRepository.DeleteShoppingCartItem(lineItem);
+        await _cartRepository.SaveAsync();
+
+        return Ok();
     }
 }
