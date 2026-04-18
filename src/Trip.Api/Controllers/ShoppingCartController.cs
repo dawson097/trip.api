@@ -64,7 +64,7 @@ public class ShoppingCartController : ControllerBase
     }
 
     [HttpPost("checkout"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> CheckoutAsync()
+    public async Task<IActionResult> PostCheckoutAsync()
     {
         var userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         var shoppingCart = await _cartRepository.GetShoppingCartByIdAsync(userId);
