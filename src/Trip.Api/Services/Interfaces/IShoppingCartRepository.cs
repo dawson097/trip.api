@@ -46,5 +46,9 @@ public interface IShoppingCartRepository : ICommonRepository
     /// <param name="lineItem">商品实体</param>
     void DeleteShoppingCartItem(CartLineItem lineItem);
 
+    /// <summary>
+    /// 删除商品列表实体数据
+    /// </summary>
+    /// <param name="lineItems">商品列表</param>
     void DeleteShoppingCartItems(IEnumerable<CartLineItem> lineItems);
 }
