@@ -101,7 +101,7 @@ public class AppUserAuthenticateController : ControllerBase
             UserId = user.Id
         };
 
-        await _cartRepository.CreateShoppingCartAsync(shoppingCart);
+        await _cartRepository.AddShoppingCartAsync(shoppingCart);
         await _cartRepository.SaveAsync();
 
         return Ok("注册成功!");
