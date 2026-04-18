@@ -129,7 +129,7 @@ public class TouristRoutesController : ControllerBase
         [ModelBinder(BinderType = typeof(ArrayModelBinderHelper)), FromRoute]
         IEnumerable<Guid> routeIds)
     {
-        var routeItems = await _routeRepository.GetRouteByIdsAsync(routeIds);
+        var routeItems = await _routeRepository.GetRoutesByIdsAsync(routeIds);
 
         _routeRepository.DeleteRoutes(routeItems);
         await _routeRepository.SaveAsync();

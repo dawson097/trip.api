@@ -82,9 +82,14 @@ public class TouristRoutePicturesController : ControllerBase
     }
 
     [HttpPut("{pictureId:int}"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PutTouristRoutePictureAsync([FromRoute] int pictureId,
+    public async Task<IActionResult> PutTouristRoutePictureAsync([FromRoute] Guid routeId, [FromRoute] int pictureId,
         [FromBody] TouristRoutePictureUpdateDto pictureUpdateDto)
     {
+        if (!await _pictureRepository.RoutesExitsAsync(routeId))
+        {
+            return NotFound($"旅游路线({routeId})不存在");
+        }
+
         if (!await _pictureRepository.PicturesExitsAsync(pictureId))
         {
             return NotFound($"图片({pictureId})不存在");
@@ -99,8 +104,13 @@ public class TouristRoutePicturesController : ControllerBase
     }
 
     [HttpDelete("{pictureId:int}"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> DeleteTouristRoutePictureAsync([FromRoute] int pictureId)
+    public async Task<IActionResult> DeleteTouristRoutePictureAsync([FromRoute] Guid routeId, [FromRoute] int pictureId)
     {
+        if (!await _pictureRepository.RoutesExitsAsync(routeId))
+        {
+            return NotFound($"旅游路线({routeId})不存在");
+        }
+
         if (!await _pictureRepository.PicturesExitsAsync(pictureId))
         {
             return NotFound($"图片({pictureId})不存在");
@@ -109,6 +119,17 @@ public class TouristRoutePicturesController : ControllerBase
         var pictureFromRepo = await _pictureRepository.GetPictureByIdAsync(pictureId);
 
         _pictureRepository.DeletePicture(pictureFromRepo);
+        await _pictureRepository.SaveAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("({pictureIds})"), Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> DeleteTouristRoutePicturesAsync([FromRoute] IEnumerable<int> pictureIds)
+    {
+        var pictureItems = await _pictureRepository.GetPicturesByIdsAsync(pictureIds);
+
+        _pictureRepository.DeletePictures(pictureItems);
         await _pictureRepository.SaveAsync();
 
         return NoContent();

@@ -43,7 +43,7 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
             .FirstOrDefaultAsync(t => t.Id == routeId))!;
     }
 
-    public async Task<IEnumerable<TouristRoute>> GetRouteByIdsAsync(IEnumerable<Guid> routeIds)
+    public async Task<IEnumerable<TouristRoute>> GetRoutesByIdsAsync(IEnumerable<Guid> routeIds)
     {
         return await _context.TouristRoutes.Where(route => routeIds.Contains(route.Id)).ToListAsync();
     }

@@ -24,6 +24,11 @@ public class TouristRoutePictureRepository : CommonRepository, ITouristRoutePict
         return (await _context.TouristRoutePictures.FirstOrDefaultAsync(picture => picture.Id == pictureId))!;
     }
 
+    public async Task<IEnumerable<TouristRoutePicture>> GetPicturesByIdsAsync(IEnumerable<int> pictureIds)
+    {
+        return await _context.TouristRoutePictures.Where(picture => pictureIds.Contains(picture.Id)).ToListAsync();
+    }
+
     public async Task AddPictureAsync(Guid routeId, TouristRoutePicture picture)
     {
         if (routeId == Guid.Empty)
@@ -43,5 +48,10 @@ public class TouristRoutePictureRepository : CommonRepository, ITouristRoutePict
     public void DeletePicture(TouristRoutePicture picture)
     {
         _context.TouristRoutePictures.Remove(picture);
+    }
+
+    public void DeletePictures(IEnumerable<TouristRoutePicture> pictures)
+    {
+        _context.TouristRoutePictures.RemoveRange(pictures);
     }
 }

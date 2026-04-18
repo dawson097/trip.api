@@ -28,7 +28,7 @@ public interface ITouristRouteRepository : ICommonRepository
     /// </summary>
     /// <param name="routeIds">路线id集合</param>
     /// <returns>旅游路线列表</returns>
-    Task<IEnumerable<TouristRoute>> GetRouteByIdsAsync(IEnumerable<Guid> routeIds);
+    Task<IEnumerable<TouristRoute>> GetRoutesByIdsAsync(IEnumerable<Guid> routeIds);
 
     /// <summary>
     /// 添加旅游路线实体数据

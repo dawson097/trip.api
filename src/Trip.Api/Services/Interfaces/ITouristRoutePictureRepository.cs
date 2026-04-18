@@ -22,6 +22,13 @@ public interface ITouristRoutePictureRepository : ICommonRepository
     Task<TouristRoutePicture> GetPictureByIdAsync(int pictureId);
 
     /// <summary>
+    /// 根据图片id集合获取图片列表
+    /// </summary>
+    /// <param name="pictureIds">图片id</param>
+    /// <returns>图片列表</returns>
+    Task<IEnumerable<TouristRoutePicture>> GetPicturesByIdsAsync(IEnumerable<int> pictureIds);
+
+    /// <summary>
     /// 添加旅游路线图片实体数据
     /// </summary>
     /// <param name="routeId">路线id</param>
@@ -33,4 +40,10 @@ public interface ITouristRoutePictureRepository : ICommonRepository
     /// </summary>
     /// <param name="picture">旅游路线图片</param>
     void DeletePicture(TouristRoutePicture picture);
+
+    /// <summary>
+    /// 删除旅游路线图片列表实体数据
+    /// </summary>
+    /// <param name="pictures">旅游路线图片列表</param>
+    void DeletePictures(IEnumerable<TouristRoutePicture> pictures);
 }
