@@ -2,6 +2,9 @@ using System.Text.RegularExpressions;
 
 namespace Trip.Api.ResourceParameters;
 
+/// <summary>
+/// 旅游路线数据过滤
+/// </summary>
 public class TouristRouteResourceParameter
 {
     private string _rating = string.Empty;

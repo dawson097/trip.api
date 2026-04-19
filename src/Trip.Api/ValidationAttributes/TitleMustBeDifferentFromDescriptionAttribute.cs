@@ -4,7 +4,7 @@ using Trip.Api.Dtos.TouristRoute;
 namespace Trip.Api.ValidationAttributes;
 
 /// <summary>
-/// 标题必须与描述不一致
+/// 标题和描述一致性校验
 /// </summary>
 public class TitleMustBeDifferentFromDescriptionAttribute : ValidationAttribute
 {
