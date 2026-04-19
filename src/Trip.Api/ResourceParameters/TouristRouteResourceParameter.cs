@@ -7,7 +7,35 @@ namespace Trip.Api.ResourceParameters;
 /// </summary>
 public class TouristRouteResourceParameter
 {
+    private int _pageNumber = 1;
+    private int _pageSize = 10;
     private string _rating = string.Empty;
+
+    public int PageSize
+    {
+        get => _pageSize;
+        set
+        {
+            const int MaxPageSize = 100;
+
+            if (value >= 1)
+            {
+                _pageSize = value > MaxPageSize ? MaxPageSize : value;
+            }
+        }
+    }
+
+    public int PageNumber
+    {
+        get => _pageNumber;
+        set
+        {
+            if (value >= 1)
+            {
+                _pageNumber = value;
+            }
+        }
+    }
 
     public string Keyword { get; set; } = string.Empty;
 

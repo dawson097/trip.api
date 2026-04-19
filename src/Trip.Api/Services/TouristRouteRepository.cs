@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Trip.Api.DbContexts;
 using Trip.Api.Entities;
+using Trip.Api.Helpers;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Services;
@@ -14,7 +15,9 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
         _context = context;
     }
 
-    public async Task<IList<TouristRoute>> GetAllRoutesAsync(string keyword, string ratingType, int? ratingValue)
+    public async Task<PaginationHelper<TouristRoute>> GetAllRoutesAsync(string keyword, string ratingType,
+        int? ratingValue,
+        int pageSize, int pageNumber)
     {
         IQueryable<TouristRoute> queryRes = _context.TouristRoutes.Include(route => route.TouristRoutePictures);
 
@@ -34,7 +37,7 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
             };
         }
 
-        return await queryRes.ToListAsync();
+        return await PaginationHelper<TouristRoute>.CreateAsync(pageNumber, pageSize, queryRes);
     }
 
     public async Task<TouristRoute> GetRouteByIdAsync(Guid routeId)

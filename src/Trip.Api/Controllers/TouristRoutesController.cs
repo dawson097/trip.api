@@ -30,7 +30,7 @@ public class TouristRoutesController : ControllerBase
     {
         var routesFromRepo =
             await _routeRepository.GetAllRoutesAsync(routeParams.Keyword, routeParams.RatingType,
-                routeParams.RatingValue);
+                routeParams.RatingValue, routeParams.PageSize, routeParams.PageNumber);
 
         if (routesFromRepo == null || !routesFromRepo.Any())
         {
