@@ -26,11 +26,12 @@ public class TouristRoutesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameter routeParams)
+    public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameter routeParams,
+        [FromQuery] PaginationResourceParameter paginationParams)
     {
         var routesFromRepo =
             await _routeRepository.GetAllRoutesAsync(routeParams.Keyword, routeParams.RatingType,
-                routeParams.RatingValue, routeParams.PageSize, routeParams.PageNumber);
+                routeParams.RatingValue, paginationParams.PageSize, paginationParams.PageNumber);
 
         if (routesFromRepo == null || !routesFromRepo.Any())
         {
