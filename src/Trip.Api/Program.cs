@@ -68,6 +68,9 @@ builder.Services.AddControllers(options => options.ReturnHttpNotAcceptable = tru
         };
     }); // 配置422请求
 
+// 注册HTTP请求服务
+builder.Services.AddHttpClient();
+
 // 注册仓储服务
 builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
 builder.Services.AddTransient<ITouristRoutePictureRepository, TouristRoutePictureRepository>();
