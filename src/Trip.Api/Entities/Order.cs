@@ -34,17 +34,51 @@ public class Order
     public string? TransactionMetadata { get; set; }
 
     /// <summary>
+    /// 订单下单处理
+    /// </summary>
+    public void PaymentProcessing()
+    {
+        if (_stateMachine.CanFire(OrderStateTrigger.PlaceOrder))
+        {
+            _stateMachine.Fire(OrderStateTrigger.PlaceOrder);
+        }
+    }
+
+    /// <summary>
+    /// 订单支付成功
+    /// </summary>
+    public void PaymentApproved()
+    {
+        if (_stateMachine.CanFire(OrderStateTrigger.Approve))
+        {
+            _stateMachine.Fire(OrderStateTrigger.Approve);
+        }
+    }
+
+    /// <summary>
+    /// 订单支付失败
+    /// </summary>
+    public void PaymentRejected()
+    {
+        if (_stateMachine.CanFire(OrderStateTrigger.Reject))
+        {
+            _stateMachine.Fire(OrderStateTrigger.Reject);
+        }
+    }
+
+    /// <summary>
     /// 状态机初始化
     /// </summary>
     private void StateMachineInit()
     {
-        _stateMachine = new StateMachine<OrderState, OrderStateTrigger>(OrderState.Pending);
+        _stateMachine = new StateMachine<OrderState, OrderStateTrigger>(() => OrderState, state => OrderState = state);
 
         _stateMachine.Configure(OrderState.Pending)
             .Permit(OrderStateTrigger.PlaceOrder, OrderState.Processing)
             .Permit(OrderStateTrigger.Cancel, OrderState.Canceled);
 
         _stateMachine.Configure(OrderState.Processing)
+            .Ignore(OrderStateTrigger.PlaceOrder) // 忽略重复下单
             .Permit(OrderStateTrigger.Approve, OrderState.Completed)
             .Permit(OrderStateTrigger.Reject, OrderState.Declined);
 
