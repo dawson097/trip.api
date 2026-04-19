@@ -5,11 +5,11 @@ using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Services;
 
-public class OrderRepository : IOrderRepository
+public class OrderRepository : CommonRepository, IOrderRepository
 {
     private readonly AppDbContext _context;
 
-    public OrderRepository(AppDbContext context)
+    public OrderRepository(AppDbContext context) : base(context)
     {
         _context = context;
     }

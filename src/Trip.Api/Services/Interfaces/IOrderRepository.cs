@@ -5,7 +5,7 @@ namespace Trip.Api.Services.Interfaces;
 /// <summary>
 /// 订单仓储服务
 /// </summary>
-public interface IOrderRepository
+public interface IOrderRepository : ICommonRepository
 {
     /// <summary>
     /// 根据用户id获取该用户的所有订单实体数据
