@@ -14,8 +14,8 @@ public interface ITouristRouteRepository : ICommonRepository
     /// <param name="keyword">关键词</param>
     /// <param name="ratingType">评价类型</param>
     /// <param name="ratingValue">评价值</param>
-    /// <param name="pageSize">每页显示数据量</param>
-    /// <param name="pageNumber">页码</param>
+    /// <param name="pageSize">每页显示数据条数</param>
+    /// <param name="pageNumber">当前请求页面</param>
     /// <returns>所有旅游路线</returns>
     Task<PaginationHelper<TouristRoute>> GetAllRoutesAsync(string keyword, string ratingType, int? ratingValue,
         int pageSize,
