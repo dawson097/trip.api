@@ -2,6 +2,9 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Newtonsoft.Json;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
 using Trip.Api.Helpers;
@@ -16,16 +19,51 @@ namespace Trip.Api.Controllers;
 [ApiController, Route("api/tourist-routes")]
 public class TouristRoutesController : ControllerBase
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMapper _mapper;
     private readonly ITouristRouteRepository _routeRepository;
+    private readonly IUrlHelper _urlHelper;
 
-    public TouristRoutesController(IMapper mapper, ITouristRouteRepository routeRepository)
+    public TouristRoutesController(IHttpContextAccessor httpContextAccessor, IMapper mapper,
+        ITouristRouteRepository routeRepository,
+        IUrlHelperFactory urlHelperFactory)
     {
+        _httpContextAccessor = httpContextAccessor;
         _mapper = mapper;
         _routeRepository = routeRepository;
+        _urlHelper = urlHelperFactory.GetUrlHelper(ActionContext);
     }
 
-    [HttpGet]
+    // HTTP请求上下文
+    private new HttpContext HttpContext => _httpContextAccessor.HttpContext!;
+
+    // 当前请求状态上下文
+    private ActionContext ActionContext => new(HttpContext, HttpContext.GetRouteData(), new ActionDescriptor());
+
+    private string GenerateTouristRouteResourceUrl(TouristRouteResourceParameter routeParameter,
+        PaginationResourceParameter paginationParams, ResourceUriHelper uriHelper)
+    {
+        return (uriHelper switch
+        {
+            ResourceUriHelper.PreviousPage => _urlHelper.Link("GetTouristRoutesAsync", new
+            {
+                keyword = routeParameter.Keyword,
+                ratingType = routeParameter.RatingType,
+                pageSize = paginationParams.PageSize,
+                pageNumber = paginationParams.PageNumber
+            }),
+            ResourceUriHelper.NextPage => _urlHelper.Link("GetTouristRoutesAsync", new
+            {
+                keyword = routeParameter.Keyword,
+                ratingType = routeParameter.RatingType,
+                pageSize = paginationParams.PageSize,
+                pageNumber = paginationParams.PageNumber + 1
+            }),
+            _ => throw new ArgumentOutOfRangeException(nameof(uriHelper), uriHelper, null)
+        })!;
+    }
+
+    [HttpGet(Name = "GetTouristRoutesAsync")]
     public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameter routeParams,
         [FromQuery] PaginationResourceParameter paginationParams)
     {
@@ -37,6 +75,23 @@ public class TouristRoutesController : ControllerBase
         {
             return NotFound("找不到任何旅游路线");
         }
+
+        var previousPageLink = routesFromRepo.HasPrevious
+            ? GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriHelper.PreviousPage)
+            : null;
+        var nextPageLink = routesFromRepo.HasNext
+            ? GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriHelper.NextPage)
+            : null;
+        var pagingationMetaData = new
+        {
+            previousPageLink,
+            nextPageLink,
+            totalCount = routesFromRepo.TotalCount,
+            pageSize = routesFromRepo.PageSize,
+            currentPage = routesFromRepo.CurrentPage,
+            totalPages = routesFromRepo.TotalPages
+        };
+        Response.Headers.Append("x-pagination", JsonConvert.SerializeObject(pagingationMetaData));
 
         return Ok(_mapper.Map<List<TouristRouteDto>>(routesFromRepo));
     }
