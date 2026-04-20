@@ -19,7 +19,7 @@ public class OrderRepository : CommonRepository, IOrderRepository
     {
         var queryRes = _context.Orders.Where(order => order.UserId == userId);
 
-        return await PaginationHelper<Order>.CreateAsync(pageNumber, pageSize, queryRes);
+        return await PaginationHelper<Order>.CreatePaginationAsync(pageNumber, pageSize, queryRes);
     }
 
     public async Task<Order> GetOrderByIdAsync(Guid orderId)

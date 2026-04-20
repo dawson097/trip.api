@@ -37,7 +37,7 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
             };
         }
 
-        return await PaginationHelper<TouristRoute>.CreateAsync(pageNumber, pageSize, queryRes);
+        return await PaginationHelper<TouristRoute>.CreatePaginationAsync(pageNumber, pageSize, queryRes);
     }
 
     public async Task<TouristRoute> GetRouteByIdAsync(Guid routeId)
