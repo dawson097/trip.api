@@ -29,9 +29,10 @@ public class PaginationHelper<T> : List<T>
     {
         // 获取跳过的页数
         var skipPage = (currentPage - 1) * pageSize;
-        queryRes = queryRes.Skip(skipPage); // 跳至指定页数
-        queryRes = queryRes.Take(pageSize); // 获取该页数的数据
+        queryRes = queryRes.Skip(skipPage); // 跳过前面已显示过的记录条数
+        queryRes = queryRes.Take(pageSize); // 从当前位置开始截取指定数量的数据（即当前页的数据）
 
+        // 获取
         var pageItems = await queryRes.ToListAsync();
 
         return new PaginationHelper<T>(currentPage, pageSize, pageItems);
