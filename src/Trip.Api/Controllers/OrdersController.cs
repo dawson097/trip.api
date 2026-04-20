@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Trip.Api.Dtos.Order;
+using Trip.Api.ResourceParameters;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
@@ -30,10 +31,12 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet, Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> GetOrdersAsync()
+    public async Task<IActionResult> GetOrdersAsync([FromQuery] PaginationResourceParameter paginationParams)
     {
         var userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        var orders = await _orderRepository.GetAllOrdersAsync(userId);
+        var orders =
+            await _orderRepository.GetAllOrdersByUserIdAsync(userId, paginationParams.PageSize,
+                paginationParams.PageNumber);
 
         return Ok(_mapper.Map<IEnumerable<OrderDto>>(orders));
     }

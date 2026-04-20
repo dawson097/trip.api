@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Trip.Api.DbContexts;
 using Trip.Api.Entities;
+using Trip.Api.Helpers;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Services;
@@ -14,15 +15,17 @@ public class OrderRepository : CommonRepository, IOrderRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Order>> GetAllOrdersAsync(string userId)
+    public async Task<PaginationHelper<Order>> GetAllOrdersByUserIdAsync(string userId, int pageSize, int pageNumber)
     {
-        return await _context.Orders.Where(order => order.UserId == userId).ToListAsync();
+        var queryRes = _context.Orders.Where(order => order.UserId == userId);
+
+        return await PaginationHelper<Order>.CreateAsync(pageNumber, pageSize, queryRes);
     }
 
     public async Task<Order> GetOrderByIdAsync(Guid orderId)
     {
         return (await _context.Orders.Include(order => order.OrderItems)!
-            .ThenInclude(order => order.TouristRoute)
+            .ThenInclude(item => item.TouristRoute)
             .FirstOrDefaultAsync(order => order.Id == orderId))!;
     }
 }
