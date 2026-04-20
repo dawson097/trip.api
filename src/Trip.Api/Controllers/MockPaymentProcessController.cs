@@ -9,7 +9,7 @@ namespace Trip.Api.Controllers;
 public class MockPaymentProcessController : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> PostProcessPayment([FromQuery] Guid orderNumber,
+    public async Task<IActionResult> ProcessPaymentAsync([FromQuery] Guid orderNumber,
         [FromQuery] bool returnFault = false)
     {
         await Task.Delay(3000);

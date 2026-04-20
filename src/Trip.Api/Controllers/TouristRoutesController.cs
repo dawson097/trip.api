@@ -55,7 +55,7 @@ public class TouristRoutesController : ControllerBase
     }
 
     [HttpPost, Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PostTouristRouteAsync([FromBody] TouristRouteCreateDto routeCreateDto)
+    public async Task<IActionResult> CreateTouristRouteAsync([FromBody] TouristRouteCreateDto routeCreateDto)
     {
         var routeEntity = _mapper.Map<TouristRoute>(routeCreateDto);
 
@@ -68,7 +68,7 @@ public class TouristRoutesController : ControllerBase
     }
 
     [HttpPut("{routeId:guid}"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PutTouristRouteAsync([FromRoute] Guid routeId,
+    public async Task<IActionResult> UpdateTouristRouteAsync([FromRoute] Guid routeId,
         [FromBody] TouristRouteUpdateDto routeUpdateDto)
     {
         if (!await _routeRepository.RoutesExitsAsync(routeId))
@@ -85,7 +85,7 @@ public class TouristRoutesController : ControllerBase
     }
 
     [HttpPatch("{routeId:guid}"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PatchTouristRouteAsync([FromRoute] Guid routeId,
+    public async Task<IActionResult> PartiallyUpdateTouristRouteAsync([FromRoute] Guid routeId,
         [FromBody] JsonPatchDocument<TouristRouteUpdateDto> patchDoc)
     {
         if (!await _routeRepository.RoutesExitsAsync(routeId))

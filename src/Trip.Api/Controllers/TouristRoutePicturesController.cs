@@ -59,7 +59,7 @@ public class TouristRoutePicturesController : ControllerBase
     }
 
     [HttpPost, Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PostTouristRoutePictureAsync([FromRoute] Guid routeId,
+    public async Task<IActionResult> CreateTouristRoutePictureAsync([FromRoute] Guid routeId,
         [FromBody] TouristRoutePictureCreateDto pictureCreateDto)
     {
         if (!await _pictureRepository.RoutesExitsAsync(routeId))
@@ -82,7 +82,7 @@ public class TouristRoutePicturesController : ControllerBase
     }
 
     [HttpPut("{pictureId:int}"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PutTouristRoutePictureAsync([FromRoute] Guid routeId, [FromRoute] int pictureId,
+    public async Task<IActionResult> UpdateTouristRoutePictureAsync([FromRoute] Guid routeId, [FromRoute] int pictureId,
         [FromBody] TouristRoutePictureUpdateDto pictureUpdateDto)
     {
         if (!await _pictureRepository.RoutesExitsAsync(routeId))

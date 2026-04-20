@@ -38,7 +38,7 @@ public class ShoppingCartController : ControllerBase
     }
 
     [HttpPost("items"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PostShoppingCartItemAsync([FromBody] CartLineItemCreateDto itemCreateDto)
+    public async Task<IActionResult> CreateShoppingCartItemAsync([FromBody] CartLineItemCreateDto itemCreateDto)
     {
         var userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         var shoppingCart = await _cartRepository.GetShoppingCartByIdAsync(userId);
@@ -64,7 +64,7 @@ public class ShoppingCartController : ControllerBase
     }
 
     [HttpPost("checkout"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PostCheckoutAsync()
+    public async Task<IActionResult> CheckoutAsync()
     {
         var userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         var shoppingCart = await _cartRepository.GetShoppingCartByIdAsync(userId);

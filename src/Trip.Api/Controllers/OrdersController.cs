@@ -52,7 +52,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost("{orderId:guid}/place-order"), Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PostPlaceOrderAsync([FromRoute] Guid orderId)
+    public async Task<IActionResult> PlaceOrderAsync([FromRoute] Guid orderId)
     {
         var userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         var order = await _orderRepository.GetOrderByIdAsync(orderId);
