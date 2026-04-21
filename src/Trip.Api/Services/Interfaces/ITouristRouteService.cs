@@ -1,12 +1,13 @@
+using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
-using Trip.Api.Helpers;
+using Trip.Api.ResourceParameters;
 
 namespace Trip.Api.Services.Interfaces;
 
 /// <summary>
-/// 旅游路线仓储服务
+/// 旅游路线服务
 /// </summary>
-public interface ITouristRouteRepository : ICommonRepository
+public interface ITouristRouteService : ICommonService<TouristRoute>
 {
     /// <summary>
     /// 从数据库中根据条件获取与条件匹配的所有旅游路线实体数据
@@ -17,39 +18,37 @@ public interface ITouristRouteRepository : ICommonRepository
     /// <param name="pageSize">每页显示数据条数</param>
     /// <param name="pageNumber">当前请求页面</param>
     /// <returns>所有旅游路线</returns>
-    Task<PaginationHelper<TouristRoute>> GetAllRoutesAsync(string keyword, string ratingType, int? ratingValue,
-        int pageSize,
-        int pageNumber);
+    Task<(List<TouristRouteDto>, object)> GetAllRoutesAsync(TouristRouteResourceParameter routeParams,
+        PaginationResourceParameter paginationParamsr);
 
     /// <summary>
     /// 根据路线id从数据库获取对应的单个旅游路线实体数据
     /// </summary>
     /// <param name="routeId">路线id</param>
     /// <returns>单个旅游路线</returns>
-    Task<TouristRoute> GetRouteByIdAsync(Guid routeId);
+    Task<TouristRouteDto> GetRouteByIdAsync(Guid routeId);
 
-    /// <summary>
-    /// 根据类型id集合获取旅游路线列表实体数据
-    /// </summary>
-    /// <param name="routeIds">路线id集合</param>
-    /// <returns>旅游路线列表</returns>
-    Task<IEnumerable<TouristRoute>> GetRoutesByIdsAsync(IEnumerable<Guid> routeIds);
+    Task<TouristRouteUpdateDto> GetPartialRouteByIdAsync(Guid routeId);
 
     /// <summary>
     /// 添加旅游路线实体数据
     /// </summary>
     /// <param name="route">旅游路线实体</param>
-    Task AddRouteAsync(TouristRoute route);
+    Task<TouristRouteDto> CreateRouteAsync(TouristRouteCreateDto routeCreateDto);
+
+    Task UpdateRouteAsync(Guid routeId, TouristRouteUpdateDto routeUpdateDto);
+
+    Task PartialUpdateRouteAsync(Guid routeId);
 
     /// <summary>
     /// 删除旅游路线实体数据
     /// </summary>
     /// <param name="route">旅游路线实体</param>
-    void DeleteRoute(TouristRoute route);
+    Task DeleteRouteAsync(Guid routeId);
 
     /// <summary>
     /// 删除旅游路线列表实体数据
     /// </summary>
     /// <param name="routes">旅游路线列表</param>
-    void DeleteRoutes(IEnumerable<TouristRoute> routes);
+    Task DeleteRoutesAsync(IEnumerable<Guid> routeIds);
 }

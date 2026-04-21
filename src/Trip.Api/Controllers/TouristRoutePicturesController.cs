@@ -2,7 +2,6 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoutePicture;
-using Trip.Api.Entities;
 using Trip.Api.Services.Interfaces;
 
 namespace Trip.Api.Controllers;
@@ -11,68 +10,54 @@ namespace Trip.Api.Controllers;
 /// 旅游路线图片控制器路由
 /// </summary>
 [ApiController, Route("api/tourist-routes/{routeId:guid}/pictures")]
-public class TouristRoutePicturesController : ControllerBase
+public class TouristRoutePicturesController(ITouristRoutePictureService pictureService, IMapper mapper) : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly ITouristRoutePictureRepository _pictureRepository;
-
-    public TouristRoutePicturesController(IMapper mapper, ITouristRoutePictureRepository pictureRepository)
-    {
-        _mapper = mapper;
-        _pictureRepository = pictureRepository;
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetTouristRoutePicturesAsync([FromRoute] Guid routeId)
     {
-        if (!await _pictureRepository.RoutesExitsAsync(routeId))
+        if (!await pictureService.CheckExitsAsync(route => route.TouristRouteId == routeId))
         {
             return NotFound($"旅游路线({routeId})找不到");
         }
 
-        var picturesFromRepo = await _pictureRepository.GetAllPicturesByRouteIdAsync(routeId);
+        var picturesFromServ = await pictureService.GetAllPicturesByRouteIdAsync(routeId);
 
-        if (picturesFromRepo == null || !picturesFromRepo.Any())
+        if (picturesFromServ == null || !picturesFromServ.Any())
         {
             return NotFound("找不到任何图片");
         }
 
-        return Ok(_mapper.Map<IEnumerable<TouristRoutePictureDto>>(picturesFromRepo));
+        return Ok(picturesFromServ);
     }
 
     [HttpGet("{pictureId:int}", Name = "GetTouristRoutePictureAsync")]
     public async Task<IActionResult> GetTouristRoutePictureAsync([FromRoute] Guid routeId, [FromRoute] int pictureId)
     {
-        if (!await _pictureRepository.RoutesExitsAsync(routeId))
+        if (!await pictureService.CheckExitsAsync(route => route.TouristRouteId == routeId))
         {
             return NotFound($"旅游路线({routeId})找不到");
         }
 
-        var pictureFromRepo = await _pictureRepository.GetPictureByIdAsync(pictureId);
+        var pictureFromServ = await pictureService.GetPictureByIdAsync(pictureId);
 
-        if (pictureFromRepo == null)
+        if (pictureFromServ == null)
         {
             return NotFound($"图片({pictureId})找不到");
         }
 
-        return Ok(_mapper.Map<TouristRoutePictureDto>(pictureFromRepo));
+        return Ok(pictureFromServ);
     }
 
     [HttpPost, Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> CreateTouristRoutePictureAsync([FromRoute] Guid routeId,
         [FromBody] TouristRoutePictureCreateDto pictureCreateDto)
     {
-        if (!await _pictureRepository.RoutesExitsAsync(routeId))
+        if (!await pictureService.CheckExitsAsync(route => route.TouristRouteId == routeId))
         {
             return NotFound($"旅游路线({routeId})不存在");
         }
 
-        var pictureEntity = _mapper.Map<TouristRoutePicture>(pictureCreateDto);
-
-        await _pictureRepository.AddPictureAsync(routeId, pictureEntity);
-        await _pictureRepository.SaveAsync();
-
-        var pictureToReturn = _mapper.Map<TouristRoutePictureDto>(pictureEntity);
+        var pictureToReturn = await pictureService.CreateTouristRoutePictureAsync(routeId, pictureCreateDto);
 
         return CreatedAtRoute("GetTouristRoutePictureAsync", new
         {
@@ -85,20 +70,17 @@ public class TouristRoutePicturesController : ControllerBase
     public async Task<IActionResult> UpdateTouristRoutePictureAsync([FromRoute] Guid routeId, [FromRoute] int pictureId,
         [FromBody] TouristRoutePictureUpdateDto pictureUpdateDto)
     {
-        if (!await _pictureRepository.RoutesExitsAsync(routeId))
+        if (!await pictureService.CheckExitsAsync(route => route.TouristRouteId == routeId))
         {
             return NotFound($"旅游路线({routeId})不存在");
         }
 
-        if (!await _pictureRepository.PicturesExitsAsync(pictureId))
+        if (!await pictureService.CheckExitsAsync(picture => picture.Id == pictureId))
         {
             return NotFound($"图片({pictureId})不存在");
         }
 
-        var pictureFromRepo = await _pictureRepository.GetPictureByIdAsync(pictureId);
-
-        _mapper.Map(pictureUpdateDto, pictureFromRepo);
-        await _pictureRepository.SaveAsync();
+        await pictureService.UpdatePictureByIdAsync(pictureId, pictureUpdateDto);
 
         return NoContent();
     }
@@ -106,20 +88,17 @@ public class TouristRoutePicturesController : ControllerBase
     [HttpDelete("{pictureId:int}"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> DeleteTouristRoutePictureAsync([FromRoute] Guid routeId, [FromRoute] int pictureId)
     {
-        if (!await _pictureRepository.RoutesExitsAsync(routeId))
+        if (!await pictureService.CheckExitsAsync(route => route.TouristRouteId == routeId))
         {
             return NotFound($"旅游路线({routeId})不存在");
         }
 
-        if (!await _pictureRepository.PicturesExitsAsync(pictureId))
+        if (!await pictureService.CheckExitsAsync(picture => picture.Id == pictureId))
         {
             return NotFound($"图片({pictureId})不存在");
         }
 
-        var pictureFromRepo = await _pictureRepository.GetPictureByIdAsync(pictureId);
-
-        _pictureRepository.DeletePicture(pictureFromRepo);
-        await _pictureRepository.SaveAsync();
+        await pictureService.DeletePictureByIdAsync(pictureId);
 
         return NoContent();
     }
@@ -127,10 +106,7 @@ public class TouristRoutePicturesController : ControllerBase
     [HttpDelete("({pictureIds})"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> DeleteTouristRoutePicturesAsync([FromRoute] IEnumerable<int> pictureIds)
     {
-        var pictureItems = await _pictureRepository.GetPicturesByIdsAsync(pictureIds);
-
-        _pictureRepository.DeletePictures(pictureItems);
-        await _pictureRepository.SaveAsync();
+        await pictureService.DeletePicturesByIdsAsync(pictureIds);
 
         return NoContent();
     }

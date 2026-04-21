@@ -10,6 +10,8 @@ using Trip.Api.Configs;
 using Trip.Api.DbContexts;
 using Trip.Api.Entities;
 using Trip.Api.Extensions;
+using Trip.Api.Repositories;
+using Trip.Api.Repositories.Interfaces;
 using Trip.Api.Services;
 using Trip.Api.Services.Interfaces;
 
@@ -72,10 +74,21 @@ builder.Services.AddControllers(options => options.ReturnHttpNotAcceptable = tru
 builder.Services.AddHttpClient();
 
 // 注册仓储服务
+builder.Services.AddTransient(typeof(ICommonRepository<>), typeof(CommonRepository<>));
 builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
 builder.Services.AddTransient<ITouristRoutePictureRepository, TouristRoutePictureRepository>();
 builder.Services.AddTransient<IShoppingCartRepository, ShoppingCartRepository>();
+builder.Services.AddTransient<ICartLineItemRepository, CartLineItemRepository>();
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+
+// 注册业务逻辑服务
+builder.Services.AddTransient(typeof(ICommonService<>), typeof(CommonService<>));
+builder.Services.AddTransient<ITouristRouteService, TouristRouteService>();
+builder.Services.AddTransient<ITouristRoutePictureService, TouristRoutePictureService>();
+builder.Services.AddTransient<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddTransient<ICartLineItemService, CartLineItemService>();
+builder.Services.AddTransient<IAppUserService, AppUserService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
 
 // 注册数据库上下文连接配置服务
 builder.Services.AddDbContext<AppDbContext>(options =>

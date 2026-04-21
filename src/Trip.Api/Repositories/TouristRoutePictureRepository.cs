@@ -1,18 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Trip.Api.DbContexts;
 using Trip.Api.Entities;
-using Trip.Api.Services.Interfaces;
+using Trip.Api.Repositories.Interfaces;
 
-namespace Trip.Api.Services;
+namespace Trip.Api.Repositories;
 
-public class TouristRoutePictureRepository : CommonRepository, ITouristRoutePictureRepository
+public class TouristRoutePictureRepository(AppDbContext context)
+    : CommonRepository<TouristRoutePicture>(context), ITouristRoutePictureRepository
 {
-    private readonly AppDbContext _context;
-
-    public TouristRoutePictureRepository(AppDbContext context) : base(context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
 
     public async Task<IList<TouristRoutePicture>> GetAllPicturesByRouteIdAsync(Guid routeId)
     {
@@ -29,7 +25,7 @@ public class TouristRoutePictureRepository : CommonRepository, ITouristRoutePict
         return await _context.TouristRoutePictures.Where(picture => pictureIds.Contains(picture.Id)).ToListAsync();
     }
 
-    public async Task AddPictureAsync(Guid routeId, TouristRoutePicture picture)
+    public async Task CreatePictureAsync(Guid routeId, TouristRoutePicture picture)
     {
         if (routeId == Guid.Empty)
         {

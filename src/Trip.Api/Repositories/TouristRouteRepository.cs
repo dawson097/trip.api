@@ -2,17 +2,24 @@ using Microsoft.EntityFrameworkCore;
 using Trip.Api.DbContexts;
 using Trip.Api.Entities;
 using Trip.Api.Helpers;
-using Trip.Api.Services.Interfaces;
+using Trip.Api.Repositories.Interfaces;
 
-namespace Trip.Api.Services;
+namespace Trip.Api.Repositories;
 
-public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
+public class TouristRouteRepository(AppDbContext context)
+    : CommonRepository<TouristRoute>(context), ITouristRouteRepository
 {
-    private readonly AppDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public TouristRouteRepository(AppDbContext context) : base(context)
+    public async Task<TouristRoute> GetRouteByIdAsync(Guid routeId)
     {
-        _context = context;
+        return (await _context.TouristRoutes.Include(route => route.TouristRoutePictures)
+            .FirstOrDefaultAsync(t => t.Id == routeId))!;
+    }
+
+    public async Task<IEnumerable<TouristRoute>> GetRoutesByIdsAsync(IEnumerable<Guid> routeIds)
+    {
+        return await _context.TouristRoutes.Where(route => routeIds.Contains(route.Id)).ToListAsync();
     }
 
     public async Task<PaginationHelper<TouristRoute>> GetAllRoutesAsync(string keyword, string ratingType,
@@ -33,25 +40,14 @@ public class TouristRouteRepository : CommonRepository, ITouristRouteRepository
             {
                 "largerThan" => queryRes.Where(route => route.Rating >= ratingValue),
                 "lessThan" => queryRes.Where(route => route.Rating <= ratingValue),
-                _ => queryRes.Where(route => route.Rating == ratingValue)
+                _ => queryRes.Where(route => (int)route.Rating! == ratingValue)
             };
         }
 
         return await PaginationHelper<TouristRoute>.CreatePaginationAsync(pageNumber, pageSize, queryRes);
     }
 
-    public async Task<TouristRoute> GetRouteByIdAsync(Guid routeId)
-    {
-        return (await _context.TouristRoutes.Include(route => route.TouristRoutePictures)
-            .FirstOrDefaultAsync(t => t.Id == routeId))!;
-    }
-
-    public async Task<IEnumerable<TouristRoute>> GetRoutesByIdsAsync(IEnumerable<Guid> routeIds)
-    {
-        return await _context.TouristRoutes.Where(route => routeIds.Contains(route.Id)).ToListAsync();
-    }
-
-    public async Task AddRouteAsync(TouristRoute route)
+    public async Task CreateRouteAsync(TouristRoute route)
     {
         if (route == null)
         {
