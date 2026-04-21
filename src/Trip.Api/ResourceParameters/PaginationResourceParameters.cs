@@ -3,7 +3,7 @@ namespace Trip.Api.ResourceParameters;
 /// <summary>
 /// 分页参数处理
 /// </summary>
-public class PaginationResourceParameter
+public class PaginationResourceParameters
 {
     private int _pageNumber = 1;
     private int _pageSize = 10;

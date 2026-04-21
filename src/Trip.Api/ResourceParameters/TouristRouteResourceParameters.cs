@@ -5,7 +5,7 @@ namespace Trip.Api.ResourceParameters;
 /// <summary>
 /// 旅游路线参数处理
 /// </summary>
-public class TouristRouteResourceParameter
+public class TouristRouteResourceParameters
 {
     private string _rating = string.Empty;
 
