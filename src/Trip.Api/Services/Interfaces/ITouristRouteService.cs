@@ -63,4 +63,11 @@ public interface ITouristRouteService : ICommonService<TouristRoute>
     /// </summary>
     /// <param name="routeIds">路线id集合</param>
     Task DeleteRoutesAsync(IEnumerable<Guid> routeIds);
+
+    /// <summary>
+    /// 根据传入字段判断映射参数是否存在
+    /// </summary>
+    /// <param name="fields">字段</param>
+    /// <returns>存在返回true，反之返回false</returns>
+    bool MappingExists(string fields);
 }

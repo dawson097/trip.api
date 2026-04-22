@@ -115,6 +115,11 @@ public class TouristRouteService(
         await routeRepository.SaveAsync();
     }
 
+    public bool MappingExists(string fields)
+    {
+        return !propertyMappingService.IsMappingExists<TouristRouteDto, TouristRoute>(fields);
+    }
+
 
     private string GenerateTouristRouteResourceUrl(TouristRouteResourceParameters routeParameters,
         PaginationResourceParameters paginationParams, ResourceUriHelper uriHelper)

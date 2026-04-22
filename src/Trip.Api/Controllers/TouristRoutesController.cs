@@ -20,13 +20,17 @@ public class TouristRoutesController(ITouristRouteService routeService)
     public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameters routeParams,
         [FromQuery] PaginationResourceParameters paginationParams)
     {
+        if (routeService.MappingExists(routeParams.OrderBy!))
+        {
+            return BadRequest("请输入正确的排序参数");
+        }
+
         var (routeFromServ, paginationMetaData) = await routeService.GetAllRoutesAsync(routeParams, paginationParams);
 
         if (routeFromServ == null || !routeFromServ.Any())
         {
             return NotFound("找不到任何旅游路线");
         }
-
 
         Response.Headers.Append("x-pagination", JsonConvert.SerializeObject(paginationMetaData));
 
