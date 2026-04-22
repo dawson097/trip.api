@@ -121,7 +121,12 @@ public class TouristRouteService(
 
     public bool MappingExists(string fields)
     {
-        return !propertyMappingService.IsMappingExists<TouristRouteDto, TouristRoute>(fields);
+        return propertyMappingService.IsMappingExists<TouristRouteDto, TouristRoute>(fields);
+    }
+
+    public bool PropertiesExists(string fields)
+    {
+        return propertyMappingService.IsPropertyExists<TouristRouteDto>(fields);
     }
 
 

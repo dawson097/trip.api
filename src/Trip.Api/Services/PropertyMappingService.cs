@@ -1,3 +1,4 @@
+using System.Reflection;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
 using Trip.Api.Mappers.PropertyMappings;
@@ -53,6 +54,30 @@ public class PropertyMappingService : IPropertyMappingService
             var propertyName = indexOfFirstSpace == -1 ? trimmedField : trimmedField.Remove(indexOfFirstSpace);
 
             if (!propertyMapping.ContainsKey(propertyName))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public bool IsPropertyExists<T>(string fields)
+    {
+        if (string.IsNullOrWhiteSpace(fields))
+        {
+            return true;
+        }
+
+        var fieldsAfterSplit = fields.Split(',');
+
+        foreach (var field in fieldsAfterSplit)
+        {
+            var propertyName = field.Trim();
+            var propertyInfo = typeof(T).GetProperty(propertyName,
+                BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+            if (propertyInfo == null)
             {
                 return false;
             }

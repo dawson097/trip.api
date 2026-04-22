@@ -23,6 +23,7 @@ public interface ITouristRouteService : ICommonService<TouristRoute>
     /// 根据路线id从获取对应的单个旅游路线
     /// </summary>
     /// <param name="routeId">路线id</param>
+    /// <param name="fields"></param>
     /// <returns>单个旅游路线</returns>
     Task<ExpandoObject> GetRouteByIdAsync(Guid routeId, string fields);
 
@@ -71,4 +72,11 @@ public interface ITouristRouteService : ICommonService<TouristRoute>
     /// <param name="fields">字段</param>
     /// <returns>存在返回true，反之返回false</returns>
     bool MappingExists(string fields);
+
+    /// <summary>
+    /// 根据传入字段判断属性是否存在
+    /// </summary>
+    /// <param name="fields">字段</param>
+    /// <returns>存在返回true，反之返回false</returns>
+    bool PropertiesExists(string fields);
 }
