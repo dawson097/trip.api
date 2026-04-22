@@ -1,4 +1,3 @@
-using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.Dtos.TouristRoutePicture;
@@ -10,7 +9,7 @@ namespace Trip.Api.Controllers;
 /// 旅游路线图片控制器路由
 /// </summary>
 [ApiController, Route("api/tourist-routes/{routeId:guid}/pictures")]
-public class TouristRoutePicturesController(ITouristRoutePictureService pictureService, IMapper mapper) : ControllerBase
+public class TouristRoutePicturesController(ITouristRoutePictureService pictureService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetTouristRoutePicturesAsync([FromRoute] Guid routeId)

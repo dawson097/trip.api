@@ -17,7 +17,7 @@ public class OrderService(
     : CommonService<Order>(commonRepository), IOrderService
 {
     public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync(string userId,
-        PaginationResourceParameter paginationParams)
+        PaginationResourceParameters paginationParams)
     {
         var ordersFromRepo =
             await orderRepository.GetAllOrdersByUserIdAsync(userId, paginationParams.PageSize,
@@ -26,9 +26,9 @@ public class OrderService(
         return mapper.Map<IEnumerable<OrderDto>>(ordersFromRepo);
     }
 
-    public async Task<OrderDto> GetOrderAsync(Guid routeId)
+    public async Task<OrderDto> GetOrderAsync(Guid orderId)
     {
-        var order = await orderRepository.GetOrderByIdAsync(routeId);
+        var order = await orderRepository.GetOrderByIdAsync(orderId);
 
         return mapper.Map<OrderDto>(order);
     }

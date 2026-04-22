@@ -3,9 +3,9 @@ using System.Linq.Expressions;
 namespace Trip.Api.Services.Interfaces;
 
 /// <summary>
-/// 公共仓储服务
+/// 公共业务逻辑
 /// </summary>
-/// <remarks>为仓储服务提供公共方法</remarks>
+/// <remarks>继承公共仓储，为业务逻辑层提供方法</remarks>
 public interface ICommonService<T> where T : class
 {
     /// <summary>

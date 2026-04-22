@@ -1,4 +1,3 @@
-using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +13,12 @@ namespace Trip.Api.Controllers;
 /// 旅游路线控制器路由
 /// </summary>
 [ApiController, Route("api/tourist-routes")]
-public class TouristRoutesController(
-    ITouristRouteService routeService,
-    IMapper mapper,
-    LinkGenerator linkGenerator,
-    IHttpContextAccessor httpContextAccessor)
+public class TouristRoutesController(ITouristRouteService routeService)
     : ControllerBase
 {
     [HttpGet(Name = "GetTouristRoutesAsync")]
-    public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameter routeParams,
-        [FromQuery] PaginationResourceParameter paginationParams)
+    public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameters routeParams,
+        [FromQuery] PaginationResourceParameters paginationParams)
     {
         var (routeFromServ, paginationMetaData) = await routeService.GetAllRoutesAsync(routeParams, paginationParams);
 
@@ -82,7 +77,7 @@ public class TouristRoutesController(
             return NotFound($"旅游路线({routeId})找不到");
         }
 
-        var routeFromServ = await routeService.GetPartialRouteByIdAsync(routeId);
+        var routeFromServ = await routeService.GetPartialUpdateRouteByIdAsync(routeId);
 
         patchDoc.ApplyTo(routeFromServ, ModelState);
 

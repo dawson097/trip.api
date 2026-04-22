@@ -11,20 +11,7 @@ public class TouristRouteRepository(AppDbContext context)
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<TouristRoute> GetRouteByIdAsync(Guid routeId)
-    {
-        return (await _context.TouristRoutes.Include(route => route.TouristRoutePictures)
-            .FirstOrDefaultAsync(t => t.Id == routeId))!;
-    }
-
-    public async Task<IEnumerable<TouristRoute>> GetRoutesByIdsAsync(IEnumerable<Guid> routeIds)
-    {
-        return await _context.TouristRoutes.Where(route => routeIds.Contains(route.Id)).ToListAsync();
-    }
-
-    public async Task<PaginationHelper<TouristRoute>> GetAllRoutesAsync(string keyword, string ratingType,
-        int? ratingValue,
-        int pageSize, int pageNumber)
+    public IQueryable<TouristRoute> GetAllRoutesWithQuery(string keyword, string ratingType, int? ratingValue)
     {
         IQueryable<TouristRoute> queryRes = _context.TouristRoutes.Include(route => route.TouristRoutePictures);
 
@@ -44,7 +31,18 @@ public class TouristRouteRepository(AppDbContext context)
             };
         }
 
-        return await PaginationHelper<TouristRoute>.CreatePaginationAsync(pageNumber, pageSize, queryRes);
+        return queryRes;
+    }
+
+    public async Task<TouristRoute> GetRouteByIdAsync(Guid routeId)
+    {
+        return (await _context.TouristRoutes.Include(route => route.TouristRoutePictures)
+            .FirstOrDefaultAsync(route => route.Id == routeId))!;
+    }
+
+    public async Task<IEnumerable<TouristRoute>> GetRoutesByIdsAsync(IEnumerable<Guid> routeIds)
+    {
+        return await _context.TouristRoutes.Where(route => routeIds.Contains(route.Id)).ToListAsync();
     }
 
     public async Task CreateRouteAsync(TouristRoute route)
@@ -65,5 +63,13 @@ public class TouristRouteRepository(AppDbContext context)
     public void DeleteRoutes(IEnumerable<TouristRoute> routes)
     {
         _context.TouristRoutes.RemoveRange(routes);
+    }
+
+    public async Task<PaginationHelper<TouristRoute>> GetAllRoutesAsync(string keyword, string ratingType,
+        int? ratingValue, int pageSize, int pageNumber)
+    {
+        var queryRes = GetAllRoutesWithQuery(keyword, ratingType, ratingValue);
+
+        return await PaginationHelper<TouristRoute>.CreatePaginationAsync(pageNumber, pageSize, queryRes);
     }
 }

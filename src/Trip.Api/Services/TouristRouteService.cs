@@ -1,6 +1,7 @@
 using MapsterMapper;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
+using Trip.Api.Extensions;
 using Trip.Api.Helpers;
 using Trip.Api.Repositories.Interfaces;
 using Trip.Api.ResourceParameters;
@@ -13,16 +14,27 @@ public class TouristRouteService(
     ITouristRouteRepository routeRepository,
     LinkGenerator linkGenerator,
     IHttpContextAccessor httpContextAccessor,
+    IPropertyMappingService propertyMappingService,
     IMapper mapper)
     : CommonService<TouristRoute>(commonRepository), ITouristRouteService
 {
     public async Task<(List<TouristRouteDto>, object)> GetAllRoutesAsync(
-        TouristRouteResourceParameter routeParams,
-        PaginationResourceParameter paginationParams)
+        TouristRouteResourceParameters routeParams,
+        PaginationResourceParameters paginationParams)
     {
+        var queryRes =
+            routeRepository.GetAllRoutesWithQuery(routeParams.Keyword, routeParams.RatingType, routeParams.RatingValue);
+
+        if (!string.IsNullOrWhiteSpace(routeParams.OrderBy))
+        {
+            var routeMappingDict = propertyMappingService.GetPropertyMapping<TouristRouteDto, TouristRoute>();
+            queryRes = queryRes.ApplySort(routeParams.OrderBy, routeMappingDict);
+        }
+
         var routesFromRepo =
-            await routeRepository.GetAllRoutesAsync(routeParams.Keyword, routeParams.RatingType,
-                routeParams.RatingValue, paginationParams.PageSize, paginationParams.PageNumber);
+            await PaginationHelper<TouristRoute>.CreatePaginationAsync(paginationParams.PageNumber,
+                paginationParams.PageSize, queryRes);
+
         var previousPageLink = routesFromRepo.HasPrevious
             ? GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriHelper.PreviousPage)
             : null;
@@ -39,6 +51,7 @@ public class TouristRouteService(
             totalPages = routesFromRepo.TotalPages
         };
 
+
         var routeDtos = mapper.Map<List<TouristRouteDto>>(routesFromRepo);
 
         return (routeDtos, paginationMetaData);
@@ -51,7 +64,7 @@ public class TouristRouteService(
         return mapper.Map<TouristRouteDto>(routeFromRepo);
     }
 
-    public async Task<TouristRouteUpdateDto> GetPartialRouteByIdAsync(Guid routeId)
+    public async Task<TouristRouteUpdateDto> GetPartialUpdateRouteByIdAsync(Guid routeId)
     {
         var routeFromRepo = await routeRepository.GetRouteByIdAsync(routeId);
 
@@ -103,8 +116,8 @@ public class TouristRouteService(
     }
 
 
-    private string GenerateTouristRouteResourceUrl(TouristRouteResourceParameter routeParameter,
-        PaginationResourceParameter paginationParams, ResourceUriHelper uriHelper)
+    private string GenerateTouristRouteResourceUrl(TouristRouteResourceParameters routeParameters,
+        PaginationResourceParameters paginationParams, ResourceUriHelper uriHelper)
     {
         return (uriHelper switch
         {
@@ -112,8 +125,8 @@ public class TouristRouteService(
                 "GetTouristRoutesAsync",
                 new
                 {
-                    keyword = routeParameter.Keyword,
-                    ratingType = routeParameter.RatingType,
+                    keyword = routeParameters.Keyword,
+                    ratingType = routeParameters.RatingType,
                     pageSize = paginationParams.PageSize,
                     pageNumber = paginationParams.PageNumber
                 }),
@@ -121,8 +134,8 @@ public class TouristRouteService(
                 "GetTouristRoutesAsync",
                 new
                 {
-                    keyword = routeParameter.Keyword,
-                    ratingType = routeParameter.RatingType,
+                    keyword = routeParameters.Keyword,
+                    ratingType = routeParameters.RatingType,
                     pageSize = paginationParams.PageSize,
                     pageNumber = paginationParams.PageNumber + 1
                 }),

@@ -1,5 +1,4 @@
 using Trip.Api.Entities;
-using Trip.Api.Helpers;
 
 namespace Trip.Api.Repositories.Interfaces;
 
@@ -17,9 +16,7 @@ public interface ITouristRouteRepository : ICommonRepository<TouristRoute>
     /// <param name="pageSize">每页显示数据条数</param>
     /// <param name="pageNumber">当前请求页面</param>
     /// <returns>所有旅游路线</returns>
-    Task<PaginationHelper<TouristRoute>> GetAllRoutesAsync(string keyword, string ratingType, int? ratingValue,
-        int pageSize,
-        int pageNumber);
+    IQueryable<TouristRoute> GetAllRoutesWithQuery(string keyword, string ratingType, int? ratingValue);
 
     /// <summary>
     /// 根据路线id从数据库获取对应的单个旅游路线实体数据

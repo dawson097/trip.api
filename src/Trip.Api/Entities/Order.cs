@@ -9,7 +9,7 @@ namespace Trip.Api.Entities;
 /// </summary>
 public class Order
 {
-    private StateMachine<OrderState, OrderStateTrigger> _stateMachine;
+    private StateMachine<OrderState, OrderStateTrigger>? _stateMachine;
 
     public Order()
     {
@@ -38,7 +38,7 @@ public class Order
     /// </summary>
     public void PaymentProcessing()
     {
-        if (_stateMachine.CanFire(OrderStateTrigger.PlaceOrder))
+        if (_stateMachine!.CanFire(OrderStateTrigger.PlaceOrder))
         {
             _stateMachine.Fire(OrderStateTrigger.PlaceOrder);
         }
@@ -49,7 +49,7 @@ public class Order
     /// </summary>
     public void PaymentApproved()
     {
-        if (_stateMachine.CanFire(OrderStateTrigger.Approve))
+        if (_stateMachine!.CanFire(OrderStateTrigger.Approve))
         {
             _stateMachine.Fire(OrderStateTrigger.Approve);
         }
@@ -60,7 +60,7 @@ public class Order
     /// </summary>
     public void PaymentRejected()
     {
-        if (_stateMachine.CanFire(OrderStateTrigger.Reject))
+        if (_stateMachine!.CanFire(OrderStateTrigger.Reject))
         {
             _stateMachine.Fire(OrderStateTrigger.Reject);
         }

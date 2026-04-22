@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Trip.Api.ResourceParameters;
@@ -12,14 +11,12 @@ namespace Trip.Api.Controllers;
 /// </summary>
 [ApiController, Route("api/orders")]
 public class OrdersController(
-    IHttpClientFactory httpClientFactory,
     IHttpContextAccessor httpContextAccessor,
-    IMapper mapper,
     IOrderService orderService)
     : ControllerBase
 {
     [HttpGet, Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> GetOrdersAsync([FromQuery] PaginationResourceParameter paginationParams)
+    public async Task<IActionResult> GetOrdersAsync([FromQuery] PaginationResourceParameters paginationParams)
     {
         var userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         var orderFromServ = await orderService.GetAllOrdersAsync(userId, paginationParams);
