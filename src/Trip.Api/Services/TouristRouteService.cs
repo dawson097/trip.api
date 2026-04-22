@@ -128,7 +128,8 @@ public class TouristRouteService(
                     keyword = routeParameters.Keyword,
                     ratingType = routeParameters.RatingType,
                     pageSize = paginationParams.PageSize,
-                    pageNumber = paginationParams.PageNumber
+                    pageNumber = paginationParams.PageNumber,
+                    orderBy = routeParameters.OrderBy
                 }),
             ResourceUriHelper.NextPage => linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!,
                 "GetTouristRoutesAsync",
@@ -137,9 +138,18 @@ public class TouristRouteService(
                     keyword = routeParameters.Keyword,
                     ratingType = routeParameters.RatingType,
                     pageSize = paginationParams.PageSize,
-                    pageNumber = paginationParams.PageNumber + 1
+                    pageNumber = paginationParams.PageNumber + 1,
+                    orderBy = routeParameters.OrderBy
                 }),
-            _ => throw new ArgumentOutOfRangeException(nameof(uriHelper), uriHelper, null)
+            _ => linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "GetTouristRoutesAsync",
+                new
+                {
+                    keyword = routeParameters.Keyword,
+                    ratingType = routeParameters.RatingType,
+                    pageSize = paginationParams.PageSize,
+                    pageNumber = paginationParams.PageNumber,
+                    orderBy = routeParameters.OrderBy
+                })
         })!;
     }
 }
