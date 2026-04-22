@@ -20,9 +20,14 @@ public class TouristRoutesController(ITouristRouteService routeService)
     public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameters routeParams,
         [FromQuery] PaginationResourceParameters paginationParams)
     {
-        if (routeService.MappingExists(routeParams.OrderBy!))
+        if (!routeService.MappingExists(routeParams.OrderBy!))
         {
             return BadRequest("请输入正确的排序参数");
+        }
+
+        if (!routeService.PropertiesExists(routeParams.Fields!))
+        {
+            return BadRequest("请输入正确的塑性参数");
         }
 
         var (routesFromShaped, paginationMetaData) =
@@ -41,6 +46,11 @@ public class TouristRoutesController(ITouristRouteService routeService)
     [HttpGet("{routeId:guid}", Name = "GetTouristRouteAsync")]
     public async Task<IActionResult> GetTouristRouteAsync([FromRoute] Guid routeId, [FromQuery] string fields)
     {
+        if (!routeService.PropertiesExists(fields))
+        {
+            return BadRequest("请输入正确的塑性参数");
+        }
+
         var routeFromShaped = await routeService.GetRouteByIdAsync(routeId, fields);
 
         if (routeFromShaped == null)
