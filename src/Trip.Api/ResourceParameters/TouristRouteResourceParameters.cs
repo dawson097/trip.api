@@ -35,4 +35,6 @@ public class TouristRouteResourceParameters
             }
         }
     }
+
+    public string? OrderBy { get; set; }
 }

@@ -83,6 +83,7 @@ builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 
 // 注册业务逻辑服务
 builder.Services.AddTransient(typeof(ICommonService<>), typeof(CommonService<>));
+builder.Services.AddTransient<IPropertyMappingService, PropertyMappingService>();
 builder.Services.AddTransient<ITouristRouteService, TouristRouteService>();
 builder.Services.AddTransient<ITouristRoutePictureService, TouristRoutePictureService>();
 builder.Services.AddTransient<IShoppingCartService, ShoppingCartService>();

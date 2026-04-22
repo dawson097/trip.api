@@ -3,7 +3,7 @@ using Trip.Api.Dtos.CartLineItem;
 using Trip.Api.Dtos.ShoppingCart;
 using Trip.Api.Entities;
 
-namespace Trip.Api.Mappers;
+namespace Trip.Api.Mappers.MappingConfigs;
 
 public class ShoppingCartMapper : IRegister
 {

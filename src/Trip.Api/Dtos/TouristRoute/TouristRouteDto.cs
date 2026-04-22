@@ -15,6 +15,8 @@ public class TouristRouteDto
 
     public decimal Price { get; set; }
 
+    public decimal OriginalPrice { get; set; }
+
     public DateTime CreateTime { get; set; }
 
     public DateTime? UpdateTime { get; set; }

@@ -2,7 +2,7 @@ using Mapster;
 using Trip.Api.Dtos.TouristRoutePicture;
 using Trip.Api.Entities;
 
-namespace Trip.Api.Mappers;
+namespace Trip.Api.Mappers.MappingConfigs;
 
 /// <summary>
 /// 旅游路线图片映射

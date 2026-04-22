@@ -2,7 +2,7 @@ using Mapster;
 using Trip.Api.Dtos.Order;
 using Trip.Api.Entities;
 
-namespace Trip.Api.Mappers;
+namespace Trip.Api.Mappers.MappingConfigs;
 
 public class OrderMapper : IRegister
 {
