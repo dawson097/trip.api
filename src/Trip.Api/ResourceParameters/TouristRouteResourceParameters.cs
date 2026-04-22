@@ -37,4 +37,6 @@ public class TouristRouteResourceParameters
     }
 
     public string? OrderBy { get; set; }
+
+    public string? Fields { get; set; }
 }

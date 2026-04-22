@@ -1,3 +1,4 @@
+using System.Dynamic;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
 using Trip.Api.ResourceParameters;
@@ -15,7 +16,7 @@ public interface ITouristRouteService : ICommonService<TouristRoute>
     /// <param name="routeParams">路线参数</param>
     /// <param name="paginationParams">分页参数</param>
     /// <returns>所有旅游路线</returns>
-    Task<(List<TouristRouteDto>, object)> GetAllRoutesAsync(TouristRouteResourceParameters routeParams,
+    Task<(IEnumerable<ExpandoObject>, object)> GetAllRoutesAsync(TouristRouteResourceParameters routeParams,
         PaginationResourceParameters paginationParams);
 
     /// <summary>
@@ -23,7 +24,7 @@ public interface ITouristRouteService : ICommonService<TouristRoute>
     /// </summary>
     /// <param name="routeId">路线id</param>
     /// <returns>单个旅游路线</returns>
-    Task<TouristRouteDto> GetRouteByIdAsync(Guid routeId);
+    Task<ExpandoObject> GetRouteByIdAsync(Guid routeId, string fields);
 
     /// <summary>
     /// 根据路线id获取需要进行局部更新的旅游路线

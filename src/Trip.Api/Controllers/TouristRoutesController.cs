@@ -25,29 +25,30 @@ public class TouristRoutesController(ITouristRouteService routeService)
             return BadRequest("请输入正确的排序参数");
         }
 
-        var (routeFromServ, paginationMetaData) = await routeService.GetAllRoutesAsync(routeParams, paginationParams);
+        var (routesFromShaped, paginationMetaData) =
+            await routeService.GetAllRoutesAsync(routeParams, paginationParams);
 
-        if (routeFromServ == null || !routeFromServ.Any())
+        if (routesFromShaped == null || !routesFromShaped.Any())
         {
             return NotFound("找不到任何旅游路线");
         }
 
         Response.Headers.Append("x-pagination", JsonConvert.SerializeObject(paginationMetaData));
 
-        return Ok(routeFromServ);
+        return Ok(routesFromShaped);
     }
 
     [HttpGet("{routeId:guid}", Name = "GetTouristRouteAsync")]
-    public async Task<IActionResult> GetTouristRouteAsync([FromRoute] Guid routeId)
+    public async Task<IActionResult> GetTouristRouteAsync([FromRoute] Guid routeId, [FromQuery] string fields)
     {
-        var routeFromRepo = await routeService.GetRouteByIdAsync(routeId);
+        var routeFromShaped = await routeService.GetRouteByIdAsync(routeId, fields);
 
-        if (routeFromRepo == null)
+        if (routeFromShaped == null)
         {
             return NotFound($"旅游路线({routeId})找不到");
         }
 
-        return Ok(routeFromRepo);
+        return Ok(routeFromShaped);
     }
 
     [HttpPost, Authorize(AuthenticationSchemes = "Bearer")]

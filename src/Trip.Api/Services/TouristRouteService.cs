@@ -1,3 +1,4 @@
+using System.Dynamic;
 using MapsterMapper;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
@@ -18,7 +19,7 @@ public class TouristRouteService(
     IMapper mapper)
     : CommonService<TouristRoute>(commonRepository), ITouristRouteService
 {
-    public async Task<(List<TouristRouteDto>, object)> GetAllRoutesAsync(
+    public async Task<(IEnumerable<ExpandoObject>, object)> GetAllRoutesAsync(
         TouristRouteResourceParameters routeParams,
         PaginationResourceParameters paginationParams)
     {
@@ -52,16 +53,19 @@ public class TouristRouteService(
         };
 
 
-        var routeDtos = mapper.Map<List<TouristRouteDto>>(routesFromRepo);
+        var routesDtos = mapper.Map<List<TouristRouteDto>>(routesFromRepo);
+        var routesFromShaped = routesDtos.ShapeDataList(routeParams.Fields!);
 
-        return (routeDtos, paginationMetaData);
+
+        return (routesFromShaped, paginationMetaData);
     }
 
-    public async Task<TouristRouteDto> GetRouteByIdAsync(Guid routeId)
+    public async Task<ExpandoObject> GetRouteByIdAsync(Guid routeId, string fields)
     {
         var routeFromRepo = await routeRepository.GetRouteByIdAsync(routeId);
+        var routeDto = mapper.Map<TouristRouteDto>(routeFromRepo);
 
-        return mapper.Map<TouristRouteDto>(routeFromRepo);
+        return routeDto.ShapeData(fields);
     }
 
     public async Task<TouristRouteUpdateDto> GetPartialUpdateRouteByIdAsync(Guid routeId)
