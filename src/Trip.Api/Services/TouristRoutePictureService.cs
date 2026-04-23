@@ -26,7 +26,7 @@ public class TouristRoutePictureService(
         return mapper.Map<TouristRoutePictureDto>(pictureFromRepo);
     }
 
-    public async Task<TouristRoutePictureDto> CreateTouristRoutePictureAsync(Guid routeId,
+    public async Task<TouristRoutePictureDto> CreatePictureAsync(Guid routeId,
         TouristRoutePictureCreateDto pictureCreateDto)
     {
         var pictureEntity = mapper.Map<TouristRoutePicture>(pictureCreateDto);

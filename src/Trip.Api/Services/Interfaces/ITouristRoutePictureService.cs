@@ -28,7 +28,7 @@ public interface ITouristRoutePictureService : ICommonService<TouristRoutePictur
     /// <param name="routeId">路线id</param>
     /// <param name="pictureCreateDto">图片创建DTO</param>
     /// <returns>创建完成返回数据</returns>
-    Task<TouristRoutePictureDto> CreateTouristRoutePictureAsync(Guid routeId,
+    Task<TouristRoutePictureDto> CreatePictureAsync(Guid routeId,
         TouristRoutePictureCreateDto pictureCreateDto);
 
     /// <summary>
