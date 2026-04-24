@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Trip.Api.DbContexts;
 using Trip.Api.Entities;
 
@@ -20,6 +21,8 @@ public static class UserDataSeederExtensions
         {
             // 获取数据库上下文
             var context = services.GetRequiredService<AppDbContext>();
+            await context.Database.MigrateAsync();
+
             var userManager = services.GetRequiredService<UserManager<AppUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
