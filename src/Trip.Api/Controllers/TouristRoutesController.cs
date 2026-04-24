@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Trip.Api.Dtos.Link;
 using Trip.Api.Dtos.TouristRoute;
@@ -20,8 +21,13 @@ public class TouristRoutesController(ITouristRouteService routeService, UrlHelpe
 {
     [HttpGet(Name = "GetTouristRoutesAsync")]
     public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameters routeParams,
-        [FromQuery] PaginationResourceParameters paginationParams)
+        [FromQuery] PaginationResourceParameters paginationParams, [FromHeader(Name = "Accept")] string mediaType)
     {
+        if (!MediaTypeHeaderValue.TryParse(mediaType, out var parsedMediaType))
+        {
+            return BadRequest("媒体类型解析失败");
+        }
+
         if (!routeService.MappingExists(routeParams.OrderBy!))
         {
             return BadRequest("请输入正确的排序参数");
@@ -42,23 +48,28 @@ public class TouristRoutesController(ITouristRouteService routeService, UrlHelpe
 
         Response.Headers.Append("x-pagination", JsonConvert.SerializeObject(paginationMetaData));
 
-        var routesLinks = CreateRoutesLinks(routeParams, paginationParams);
-        var routesShapedDataList = routesFromShaped.Select(route =>
+        if (parsedMediaType.MediaType == "application/vnd.personal.hateoas+json")
         {
-            var routeDict = route as IDictionary<string, object>;
-            var links = CreateRouteLink((Guid)routeDict["Id"], null);
-            routeDict.Add("links", links);
+            var routesLinks = CreateRoutesLinks(routeParams, paginationParams);
+            var routesShapedDataList = routesFromShaped.Select(route =>
+            {
+                var routeDict = route as IDictionary<string, object>;
+                var links = CreateRouteLink((Guid)routeDict["Id"], null);
+                routeDict.Add("links", links);
 
-            return routeDict;
-        });
+                return routeDict;
+            });
 
-        var routesWithLinks = new
-        {
-            value = routesShapedDataList,
-            links = routesLinks
-        };
+            var routesWithLinks = new
+            {
+                value = routesShapedDataList,
+                links = routesLinks
+            };
 
-        return Ok(routesWithLinks);
+            return Ok(routesWithLinks);
+        }
+
+        return Ok(routesFromShaped);
     }
 
     [HttpGet("{routeId:guid}", Name = "GetTouristRouteAsync")]

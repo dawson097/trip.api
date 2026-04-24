@@ -3,6 +3,7 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
@@ -70,6 +71,19 @@ builder.Services.AddControllers(options => options.ReturnHttpNotAcceptable = tru
             };
         };
     }); // 配置422请求
+
+// 配置全局自定义媒体类型
+builder.Services.Configure<MvcOptions>(options =>
+{
+    // 获取输出格式
+    var outputFormatter = options.OutputFormatters.OfType<NewtonsoftJsonOutputFormatter>()?.FirstOrDefault();
+
+    if (outputFormatter != null)
+    {
+        // 添加自定义媒体类型
+        outputFormatter.SupportedMediaTypes.Add("application/vnd.personal.hateoas+json");
+    }
+});
 
 // 注册HTTP请求服务
 builder.Services.AddHttpClient();
