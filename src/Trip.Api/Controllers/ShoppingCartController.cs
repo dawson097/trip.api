@@ -11,8 +11,8 @@ public class ShoppingCartController(
     IShoppingCartService cartService)
     : ControllerBase
 {
-    [HttpGet, Authorize]
-    public async Task<IActionResult> GetShoppingCartsAsync()
+    [HttpGet(Name = "GetShoppingCartsAsync"), Authorize]
+    public async Task<IActionResult> GetShoppingCartAsync()
     {
         var userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         var routeFromServ = await cartService.GetShoppingCartByUserIdAsync(userId);

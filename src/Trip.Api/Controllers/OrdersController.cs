@@ -15,7 +15,7 @@ public class OrdersController(
     IOrderService orderService)
     : ControllerBase
 {
-    [HttpGet, Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpGet(Name = "GetOrders"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> GetOrdersAsync([FromQuery] PaginationResourceParameters paginationParams)
     {
         var userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
