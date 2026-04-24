@@ -5,24 +5,15 @@ namespace Trip.Api.Helpers;
 /// <summary>
 /// 分页
 /// </summary>
-public class PaginationHelper<T> : List<T>
+public class PaginationHelper<T>(int totalCount, int currentPage, int pageSize, List<T> pageItems) : List<T>(pageItems)
 {
-    public PaginationHelper(int totalCount, int currentPage, int pageSize, List<T> pageItems)
-    {
-        TotalCount = totalCount;
-        CurrentPage = currentPage;
-        PageSize = pageSize;
-        AddRange(pageItems);
-        TotalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
-    }
+    public int CurrentPage { get; set; } = currentPage;
 
-    public int CurrentPage { get; set; }
+    public int PageSize { get; set; } = pageSize;
 
-    public int PageSize { get; set; }
+    public int TotalPages { get; set; } = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-    public int TotalPages { get; set; }
-
-    public int TotalCount { get; set; }
+    public int TotalCount { get; set; } = totalCount;
 
     public bool HasPrevious => CurrentPage > 1;
 
@@ -38,13 +29,13 @@ public class PaginationHelper<T> : List<T>
     public static async Task<PaginationHelper<T>> CreatePaginationAsync(int currentPage, int pageSize,
         IQueryable<T> queryRes)
     {
-        // 获取跳过的页数
-        var skipPage = (currentPage - 1) * pageSize;
-        queryRes = queryRes.Skip(skipPage); // 跳过前面已显示过的记录条数
-        queryRes = queryRes.Take(pageSize); // 从当前位置开始截取指定数量的数据（即当前页的数据）
-
         // 获取真实的总页数
         var totalCount = await queryRes.CountAsync();
+
+        // 获取跳过的页数
+        var skipPage = (currentPage > 0 ? currentPage - 1 : 0) * pageSize;
+        queryRes = queryRes.Skip(skipPage); // 跳过前面已显示过的记录条数
+        queryRes = queryRes.Take(pageSize); // 从当前位置开始截取指定数量的数据（即当前页的数据）
 
         // 将当前页获取到的真实记录条数以集合的形式呈现
         var pageItems = await queryRes.ToListAsync();
