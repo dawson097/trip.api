@@ -11,7 +11,7 @@ public class TouristRouteRepository(AppDbContext context)
 {
     private readonly AppDbContext _context = context;
 
-    public IQueryable<TouristRoute> GetAllRoutesWithQuery(string keyword, string ratingType, int? ratingValue)
+    public IQueryable<TouristRoute> GetAllRoutesWithQuery(string? keyword, string? ratingType, int? ratingValue)
     {
         IQueryable<TouristRoute> queryRes = _context.TouristRoutes.Include(route => route.TouristRoutePictures);
 
@@ -27,7 +27,7 @@ public class TouristRouteRepository(AppDbContext context)
             {
                 "largerThan" => queryRes.Where(route => route.Rating >= ratingValue),
                 "lessThan" => queryRes.Where(route => route.Rating <= ratingValue),
-                _ => queryRes.Where(route => (int)route.Rating! == ratingValue)
+                _ => queryRes.Where(route => route.Rating == ratingValue)
             };
         }
 

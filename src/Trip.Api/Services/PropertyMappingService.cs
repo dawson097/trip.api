@@ -36,7 +36,7 @@ public class PropertyMappingService : IPropertyMappingService
         throw new Exception($"无法找到<{typeof(TSource)}>, {typeof(TDestination)}>的映射实例");
     }
 
-    public bool IsMappingExists<TSource, TDestination>(string fields)
+    public bool IsMappingExists<TSource, TDestination>(string? fields)
     {
         var propertyMapping = GetPropertyMapping<TSource, TDestination>();
 
@@ -62,7 +62,7 @@ public class PropertyMappingService : IPropertyMappingService
         return true;
     }
 
-    public bool IsPropertyExists<T>(string fields)
+    public bool IsPropertyExists<T>(string? fields)
     {
         if (string.IsNullOrWhiteSpace(fields))
         {

@@ -22,7 +22,7 @@ public interface IPropertyMappingService
     /// <typeparam name="TSource">原数据</typeparam>
     /// <typeparam name="TDestination">目标数据</typeparam>
     /// <returns>存在返回true，反之返回false</returns>
-    bool IsMappingExists<TSource, TDestination>(string fields);
+    bool IsMappingExists<TSource, TDestination>(string? fields);
 
     /// <summary>
     /// 根据传入字段判断属性是否存在
@@ -30,5 +30,5 @@ public interface IPropertyMappingService
     /// <param name="fields">传入字段</param>
     /// <typeparam name="T">泛型类型</typeparam>
     /// <returns>存在返回true，反之返回false</returns>
-    bool IsPropertyExists<T>(string fields);
+    bool IsPropertyExists<T>(string? fields);
 }

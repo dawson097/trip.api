@@ -5,7 +5,7 @@ namespace Trip.Api.Extensions;
 
 public static class EnumerableExtensions
 {
-    public static IEnumerable<ExpandoObject> ShapeDataList<TSource>(this IEnumerable<TSource> sources, string fields)
+    public static IEnumerable<ExpandoObject> ShapeDataList<TSource>(this IEnumerable<TSource> sources, string? fields)
     {
         if (sources == null)
         {
