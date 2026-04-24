@@ -1,4 +1,5 @@
 using System.Dynamic;
+using Microsoft.Extensions.Primitives;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
 using Trip.Api.ResourceParameters;
@@ -15,9 +16,10 @@ public interface ITouristRouteService : ICommonService<TouristRoute>
     /// </summary>
     /// <param name="routeParams">路线参数</param>
     /// <param name="paginationParams">分页参数</param>
+    /// <param name="primaryMediaType">主要媒体类型</param>
     /// <returns>所有旅游路线</returns>
     Task<(IEnumerable<ExpandoObject>, object)> GetAllRoutesAsync(TouristRouteResourceParameters routeParams,
-        PaginationResourceParameters paginationParams);
+        PaginationResourceParameters paginationParams, StringSegment primaryMediaType);
 
     /// <summary>
     /// 根据路线id从获取对应的单个旅游路线

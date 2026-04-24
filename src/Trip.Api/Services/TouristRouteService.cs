@@ -1,5 +1,6 @@
 using System.Dynamic;
 using MapsterMapper;
+using Microsoft.Extensions.Primitives;
 using Trip.Api.Dtos.TouristRoute;
 using Trip.Api.Entities;
 using Trip.Api.Extensions;
@@ -20,7 +21,7 @@ public class TouristRouteService(
 {
     public async Task<(IEnumerable<ExpandoObject>, object)> GetAllRoutesAsync(
         TouristRouteResourceParameters routeParams,
-        PaginationResourceParameters paginationParams)
+        PaginationResourceParameters paginationParams, StringSegment primaryType)
     {
         var queryRes =
             routeRepository.GetAllRoutesWithQuery(routeParams.Keyword, routeParams.RatingType, routeParams.RatingValue);
@@ -34,7 +35,6 @@ public class TouristRouteService(
         var routesFromRepo =
             await PaginationHelper<TouristRoute>.CreatePaginationAsync(paginationParams.PageNumber,
                 paginationParams.PageSize, queryRes);
-        var routesDtos = mapper.Map<List<TouristRouteDto>>(routesFromRepo);
 
         var previousPageLink = routesFromRepo.HasPrevious
             ? urlHelper.GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriType.PreviousPage)
@@ -52,9 +52,21 @@ public class TouristRouteService(
             totalPages = routesFromRepo.TotalPages
         };
 
-        var routesFromShaped = routesDtos.ShapeDataList(routeParams.Fields!);
+        IEnumerable<object> routesDto;
+        IEnumerable<ExpandoObject> routesShapedData;
 
-        return (routesFromShaped, paginationMetaData);
+        if (primaryType == "vnd.personal.simplify")
+        {
+            routesDto = mapper.Map<IEnumerable<TouristRouteSimplifyDto>>(routesFromRepo);
+            routesShapedData = ((IEnumerable<TouristRouteSimplifyDto>)routesDto).ShapeDataList(routeParams.Fields);
+        }
+        else
+        {
+            routesDto = mapper.Map<IEnumerable<TouristRouteDto>>(routesFromRepo);
+            routesShapedData = ((IEnumerable<TouristRouteDto>)routesDto).ShapeDataList(routeParams.Fields);
+        }
+
+        return (routesShapedData, paginationMetaData);
     }
 
     public async Task<ExpandoObject> GetRouteByIdAsync(Guid routeId, string? fields)

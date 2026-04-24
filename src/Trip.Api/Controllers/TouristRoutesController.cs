@@ -19,7 +19,13 @@ namespace Trip.Api.Controllers;
 public class TouristRoutesController(ITouristRouteService routeService, UrlHelper urlHelper)
     : ControllerBase
 {
-    [HttpGet(Name = "GetTouristRoutesAsync")]
+    [HttpGet(Name = "GetTouristRoutesAsync"),
+     Produces(
+         "application/json",
+         "application/vnd.personal.hateoas+json",
+         "application/vnd.personal.simplify+json",
+         "application/vnd.personal.simplify.hateoas+json"
+     )]
     public async Task<IActionResult> GetTouristRoutesAsync([FromQuery] TouristRouteResourceParameters routeParams,
         [FromQuery] PaginationResourceParameters paginationParams, [FromHeader(Name = "Accept")] string mediaType)
     {
@@ -38,17 +44,17 @@ public class TouristRoutesController(ITouristRouteService routeService, UrlHelpe
             return BadRequest("请输入正确的塑性参数");
         }
 
+        var isHateoas =
+            parsedMediaType.SubTypeWithoutSuffix.EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase);
+
+        var primaryMediaType = isHateoas
+            ? parsedMediaType.SubTypeWithoutSuffix.Substring(0, parsedMediaType.SubTypeWithoutSuffix.Length - 8)
+            : parsedMediaType.SubTypeWithoutSuffix;
+
         var (routesFromShaped, paginationMetaData) =
-            await routeService.GetAllRoutesAsync(routeParams, paginationParams);
+            await routeService.GetAllRoutesAsync(routeParams, paginationParams, primaryMediaType);
 
-        if (routesFromShaped == null || !routesFromShaped.Any())
-        {
-            return NotFound("找不到任何旅游路线");
-        }
-
-        Response.Headers.Append("x-pagination", JsonConvert.SerializeObject(paginationMetaData));
-
-        if (parsedMediaType.MediaType == "application/vnd.personal.hateoas+json")
+        if (isHateoas)
         {
             var routesLinks = CreateRoutesLinks(routeParams, paginationParams);
             var routesShapedDataList = routesFromShaped.Select(route =>
@@ -68,6 +74,13 @@ public class TouristRoutesController(ITouristRouteService routeService, UrlHelpe
 
             return Ok(routesWithLinks);
         }
+
+        if (routesFromShaped == null || !routesFromShaped.Any())
+        {
+            return NotFound("找不到任何旅游路线");
+        }
+
+        Response.Headers.Append("x-pagination", JsonConvert.SerializeObject(paginationMetaData));
 
         return Ok(routesFromShaped);
     }

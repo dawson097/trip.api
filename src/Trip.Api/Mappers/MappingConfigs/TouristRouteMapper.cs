@@ -23,5 +23,8 @@ public class TouristRouteMapper : IRegister
         config.NewConfig<TouristRouteUpdateDto, TouristRoute>();
 
         config.NewConfig<TouristRoute, TouristRouteUpdateDto>();
+
+        config.NewConfig<TouristRoute, TouristRouteSimplifyDto>()
+            .Map(dest => dest.Price, src => src.OriginalPrice * (decimal)(src.DiscountPresent ?? 1));
     }
 }
