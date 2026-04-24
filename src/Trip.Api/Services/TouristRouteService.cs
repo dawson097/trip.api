@@ -13,9 +13,8 @@ namespace Trip.Api.Services;
 public class TouristRouteService(
     ICommonRepository<TouristRoute> commonRepository,
     ITouristRouteRepository routeRepository,
-    LinkGenerator linkGenerator,
-    IHttpContextAccessor httpContextAccessor,
     IPropertyMappingService propertyMappingService,
+    UrlHelper urlHelper,
     IMapper mapper)
     : CommonService<TouristRoute>(commonRepository), ITouristRouteService
 {
@@ -35,12 +34,13 @@ public class TouristRouteService(
         var routesFromRepo =
             await PaginationHelper<TouristRoute>.CreatePaginationAsync(paginationParams.PageNumber,
                 paginationParams.PageSize, queryRes);
+        var routesDtos = mapper.Map<List<TouristRouteDto>>(routesFromRepo);
 
         var previousPageLink = routesFromRepo.HasPrevious
-            ? GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriHelper.PreviousPage)
+            ? urlHelper.GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriType.PreviousPage)
             : null;
         var nextPageLink = routesFromRepo.HasNext
-            ? GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriHelper.NextPage)
+            ? urlHelper.GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriType.NextPage)
             : null;
         var paginationMetaData = new
         {
@@ -52,15 +52,12 @@ public class TouristRouteService(
             totalPages = routesFromRepo.TotalPages
         };
 
-
-        var routesDtos = mapper.Map<List<TouristRouteDto>>(routesFromRepo);
         var routesFromShaped = routesDtos.ShapeDataList(routeParams.Fields!);
-
 
         return (routesFromShaped, paginationMetaData);
     }
 
-    public async Task<ExpandoObject> GetRouteByIdAsync(Guid routeId, string fields)
+    public async Task<ExpandoObject> GetRouteByIdAsync(Guid routeId, string? fields)
     {
         var routeFromRepo = await routeRepository.GetRouteByIdAsync(routeId);
         var routeDto = mapper.Map<TouristRouteDto>(routeFromRepo);
@@ -119,51 +116,13 @@ public class TouristRouteService(
         await routeRepository.SaveAsync();
     }
 
-    public bool MappingExists(string fields)
+    public bool MappingExists(string? fields)
     {
         return propertyMappingService.IsMappingExists<TouristRouteDto, TouristRoute>(fields);
     }
 
-    public bool PropertiesExists(string fields)
+    public bool PropertiesExists(string? fields)
     {
         return propertyMappingService.IsPropertyExists<TouristRouteDto>(fields);
-    }
-
-
-    private string GenerateTouristRouteResourceUrl(TouristRouteResourceParameters routeParameters,
-        PaginationResourceParameters paginationParams, ResourceUriHelper uriHelper)
-    {
-        return (uriHelper switch
-        {
-            ResourceUriHelper.PreviousPage => linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!,
-                "GetTouristRoutesAsync",
-                new
-                {
-                    keyword = routeParameters.Keyword,
-                    ratingType = routeParameters.RatingType,
-                    pageSize = paginationParams.PageSize,
-                    pageNumber = paginationParams.PageNumber,
-                    orderBy = routeParameters.OrderBy
-                }),
-            ResourceUriHelper.NextPage => linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!,
-                "GetTouristRoutesAsync",
-                new
-                {
-                    keyword = routeParameters.Keyword,
-                    ratingType = routeParameters.RatingType,
-                    pageSize = paginationParams.PageSize,
-                    pageNumber = paginationParams.PageNumber + 1,
-                    orderBy = routeParameters.OrderBy
-                }),
-            _ => linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "GetTouristRoutesAsync",
-                new
-                {
-                    keyword = routeParameters.Keyword,
-                    ratingType = routeParameters.RatingType,
-                    pageSize = paginationParams.PageSize,
-                    pageNumber = paginationParams.PageNumber,
-                    orderBy = routeParameters.OrderBy
-                })
-        })!;
     }
 }

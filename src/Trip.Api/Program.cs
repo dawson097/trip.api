@@ -10,6 +10,7 @@ using Trip.Api.Configs;
 using Trip.Api.DbContexts;
 using Trip.Api.Entities;
 using Trip.Api.Extensions;
+using Trip.Api.Helpers;
 using Trip.Api.Repositories;
 using Trip.Api.Repositories.Interfaces;
 using Trip.Api.Services;
@@ -90,6 +91,9 @@ builder.Services.AddTransient<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddTransient<ICartLineItemService, CartLineItemService>();
 builder.Services.AddTransient<IAppUserService, AppUserService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
+
+// 注册工具类
+builder.Services.AddTransient<UrlHelper>();
 
 // 注册数据库上下文连接配置服务
 builder.Services.AddDbContext<AppDbContext>(options =>

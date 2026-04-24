@@ -11,7 +11,7 @@ namespace Trip.Api.Controllers;
 [ApiController, Route("api/tourist-routes/{routeId:guid}/pictures")]
 public class TouristRoutePicturesController(ITouristRoutePictureService pictureService) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet(Name = "GetTouristRoutePicturesAsync")]
     public async Task<IActionResult> GetTouristRoutePicturesAsync([FromRoute] Guid routeId)
     {
         if (!await pictureService.CheckExitsAsync(route => route.TouristRouteId == routeId))
@@ -47,7 +47,7 @@ public class TouristRoutePicturesController(ITouristRoutePictureService pictureS
         return Ok(pictureFromServ);
     }
 
-    [HttpPost, Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpPost(Name = "CreateTouristRoutePictureAsync"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> CreateTouristRoutePictureAsync([FromRoute] Guid routeId,
         [FromBody] TouristRoutePictureCreateDto pictureCreateDto)
     {
@@ -56,7 +56,7 @@ public class TouristRoutePicturesController(ITouristRoutePictureService pictureS
             return NotFound($"旅游路线({routeId})不存在");
         }
 
-        var pictureToReturn = await pictureService.CreateTouristRoutePictureAsync(routeId, pictureCreateDto);
+        var pictureToReturn = await pictureService.CreatePictureAsync(routeId, pictureCreateDto);
 
         return CreatedAtRoute("GetTouristRoutePictureAsync", new
         {

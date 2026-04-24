@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Trip.Api.Dtos.Link;
 using Trip.Api.Dtos.TouristRoute;
+using Trip.Api.Extensions;
 using Trip.Api.Helpers;
 using Trip.Api.ResourceParameters;
 using Trip.Api.Services.Interfaces;
@@ -13,7 +15,7 @@ namespace Trip.Api.Controllers;
 /// 旅游路线控制器路由
 /// </summary>
 [ApiController, Route("api/tourist-routes")]
-public class TouristRoutesController(ITouristRouteService routeService)
+public class TouristRoutesController(ITouristRouteService routeService, UrlHelper urlHelper)
     : ControllerBase
 {
     [HttpGet(Name = "GetTouristRoutesAsync")]
@@ -40,36 +42,59 @@ public class TouristRoutesController(ITouristRouteService routeService)
 
         Response.Headers.Append("x-pagination", JsonConvert.SerializeObject(paginationMetaData));
 
-        return Ok(routesFromShaped);
+        var routesLinks = CreateRoutesLinks(routeParams, paginationParams);
+        var routesShapedDataList = routesFromShaped.Select(route =>
+        {
+            var routeDict = route as IDictionary<string, object>;
+            var links = CreateRouteLink((Guid)routeDict["Id"], null);
+            routeDict.Add("links", links);
+
+            return routeDict;
+        });
+
+        var routesWithLinks = new
+        {
+            value = routesShapedDataList,
+            links = routesLinks
+        };
+
+        return Ok(routesWithLinks);
     }
 
     [HttpGet("{routeId:guid}", Name = "GetTouristRouteAsync")]
-    public async Task<IActionResult> GetTouristRouteAsync([FromRoute] Guid routeId, [FromQuery] string fields)
+    public async Task<IActionResult> GetTouristRouteAsync([FromRoute] Guid routeId, [FromQuery] string? fields)
     {
         if (!routeService.PropertiesExists(fields))
         {
             return BadRequest("请输入正确的塑性参数");
         }
 
-        var routeFromShaped = await routeService.GetRouteByIdAsync(routeId, fields);
+        var routeFromShaped = await routeService.GetRouteByIdAsync(routeId, fields!);
 
         if (routeFromShaped == null)
         {
             return NotFound($"旅游路线({routeId})找不到");
         }
 
-        return Ok(routeFromShaped);
+        var routeWithLink = routeFromShaped as IDictionary<string, object>;
+        var routeLinks = CreateRouteLink(routeId, fields);
+        routeWithLink.Add("links", routeLinks);
+
+        return Ok(routeWithLink);
     }
 
-    [HttpPost, Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpPost(Name = "CreateTouristRouteAsync"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> CreateTouristRouteAsync([FromBody] TouristRouteCreateDto routeCreateDto)
     {
         var routeToReturn = await routeService.CreateRouteAsync(routeCreateDto);
+        var routeLink = CreateRouteLink(routeToReturn.Id, null);
+        var routeShapedData = routeToReturn.ShapeData(null) as IDictionary<string, object>;
+        routeShapedData.Add("links", routeLink);
 
-        return CreatedAtRoute("GetTouristRouteAsync", new { routeId = routeToReturn.Id }, routeToReturn);
+        return CreatedAtRoute("GetTouristRouteAsync", new { routeId = routeShapedData["Id"] }, routeShapedData);
     }
 
-    [HttpPut("{routeId:guid}"), Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpPut("{routeId:guid}", Name = "UpdateTouristRouteAsync"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> UpdateTouristRouteAsync([FromRoute] Guid routeId,
         [FromBody] TouristRouteUpdateDto routeUpdateDto)
     {
@@ -83,7 +108,8 @@ public class TouristRoutesController(ITouristRouteService routeService)
         return NoContent();
     }
 
-    [HttpPatch("{routeId:guid}"), Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpPatch("{routeId:guid}", Name = "PartiallyUpdateTouristRouteAsync"),
+     Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> PartiallyUpdateTouristRouteAsync([FromRoute] Guid routeId,
         [FromBody] JsonPatchDocument<TouristRouteUpdateDto> patchDoc)
     {
@@ -106,7 +132,7 @@ public class TouristRoutesController(ITouristRouteService routeService)
         return NoContent();
     }
 
-    [HttpDelete("{routeId:guid}"), Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpDelete("{routeId:guid}", Name = "DeleteTouristRouteAsync"), Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> DeleteTouristRouteAsync([FromRoute] Guid routeId)
     {
         if (!await routeService.CheckExitsAsync(route => route.Id == routeId))
@@ -127,5 +153,64 @@ public class TouristRoutesController(ITouristRouteService routeService)
         await routeService.DeleteRoutesAsync(routeIds);
 
         return NoContent();
+    }
+
+    /// <summary>
+    /// 创建旅游路线链接信息
+    /// </summary>
+    /// <param name="routeId">路线id</param>
+    /// <param name="fields">传入字段</param>
+    /// <returns>返回旅游路线链接信息</returns>
+    private IEnumerable<LinkDto> CreateRouteLink(Guid routeId, string? fields)
+    {
+        return
+        [
+            // 获取旅游路线
+            new LinkDto(Url.Link("GetTouristRouteAsync", new { routeId, fields })!,
+                "self",
+                "GET"),
+            // 更新
+            new LinkDto(Url.Link("UpdateTouristRouteAsync", new { routeId, fields })!,
+                "update",
+                "UPDATE"),
+            // 局部更新
+            new LinkDto(Url.Link("PartiallyUpdateTouristRouteAsync", new { routeId, fields })!,
+                "partially_update",
+                "PATCH"),
+            // 删除
+            new LinkDto(Url.Link("DeleteTouristRouteAsync", new { routeId, fields })!,
+                "delete",
+                "DELETE"),
+            // 获取图片
+            new LinkDto(Url.Link("GetTouristRoutePicturesAsync", new { routeId, fields })!,
+                "get_pictures",
+                "GET"),
+            // 创建图片
+            new LinkDto(Url.Link("CreateTouristRoutePictureAsync", new { routeId, fields })!,
+                "create_pictures",
+                "POST")
+        ];
+    }
+
+    /// <summary>
+    /// 创建旅游路线集合链接信息
+    /// </summary>
+    /// <param name="routeParams">路线参数</param>
+    /// <param name="paginationParams">分页参数</param>
+    /// <returns>返回旅游路线集合链接信息</returns>
+    private IEnumerable<LinkDto> CreateRoutesLinks(TouristRouteResourceParameters routeParams,
+        PaginationResourceParameters paginationParams)
+    {
+        return
+        [
+            new LinkDto(
+                urlHelper.GenerateTouristRouteResourceUrl(routeParams, paginationParams, ResourceUriType.CurrentPage),
+                "self",
+                "GET"),
+            new LinkDto(
+                Url.Link("CreateTouristRouteAsync", null)!,
+                "create_tourist_route",
+                "GET")
+        ];
     }
 }

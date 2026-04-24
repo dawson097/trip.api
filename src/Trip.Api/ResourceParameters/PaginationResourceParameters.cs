@@ -13,11 +13,11 @@ public class PaginationResourceParameters
         get => _pageSize;
         set
         {
-            const int MaxPageSize = 100;
+            const int maxPageSize = 100;
 
             if (value >= 1)
             {
-                _pageSize = value > MaxPageSize ? MaxPageSize : value;
+                _pageSize = value > maxPageSize ? maxPageSize : value;
             }
         }
     }
