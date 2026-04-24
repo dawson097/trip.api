@@ -1,10 +1,11 @@
 namespace Trip.Api.Helpers;
 
 /// <summary>
-/// 资源统一路径
+/// 资源分页链接类型
 /// </summary>
-public enum ResourceUriHelper
+public enum ResourceUriType
 {
     PreviousPage,
+    CurrentPage,
     NextPage
 }
