@@ -19,8 +19,8 @@
 ## 2. 技术栈
 
 1. `AspNetCore`: 基础的 `Web` 开发
-2. `EntityFrameworkCore`: 数据访问
-3. `Mapster`: ORM框架，实现数据自动映射(因为AutoMapper最新版本收费，故采用Mapster)
+2. `EntityFrameworkCore`: 实现数据库持久化操作
+3. `Mapster`: 实现数据自动映射(因为AutoMapper最新版本收费，故采用Mapster)
 4. `Newtonsoft.Json`: 数据序列化/反序列化
 5. `JSON Patch`: 为局部数据更新提供支持
 6. `JWT Bearer`: 数据鉴权
