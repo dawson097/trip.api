@@ -1,0 +1,7 @@
+﻿services:
+  trip.api:
+    image: trip.api
+    build:
+      context: .
+      dockerfile: src/Trip.Api/Dockerfile
+
