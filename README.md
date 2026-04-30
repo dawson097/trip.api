@@ -41,6 +41,11 @@ dotnet bulid
 dotnet run --project ./src/Trip.Api/Trip.Api.csproj
 ```
 
+## 4. DDD 架构重构
+
+-[基于 `DDD` 架构重构版本 github](https://github.com/dawson097/trip)
+-[基于 `DDD` 架构重构版本 gitee](https://gitee.com/dawson079/trip)
+
 ## 4. 联系我
 
 关于本项目有任何疑问，请发送邮件至我的电子邮箱: `dawson09@163.com`，或者是提 Issues
